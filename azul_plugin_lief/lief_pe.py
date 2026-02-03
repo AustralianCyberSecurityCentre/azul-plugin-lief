@@ -518,7 +518,6 @@ class AzulPluginLiefPE(BinaryPlugin):
         self.features["pe_compile_time"] = datetime.utcfromtimestamp(header.time_date_stamps)
         with contextlib.suppress(Exception):
             # Will error if machine is invalid and pe_machine won't be set in this case.
-            header.machine.value
             self.features["pe_machine"] = header.machine.name
 
         self.features["pe_characteristics"] = [c.name for c in header.characteristics_list]
@@ -656,11 +655,11 @@ class AzulPluginLiefPE(BinaryPlugin):
             )
 
             data = bytearray(s.content)
-            section_hash = md5(data).hexdigest()  # noqa: S303 # nosec B303 B324
+            section_hash = md5(data).hexdigest()  # noqa: S324
             self.features["pe_section_hash"].append(FeatureValue(section_hash, label=name))
             buf.seek(s.pointerto_raw_data)
             raw = buf.read(s.sizeof_raw_data)
-            section_hash = md5(raw).hexdigest()  # noqa: S303 # nosec B303 B324
+            section_hash = md5(raw).hexdigest()  # noqa: S324
             self.features["pe_section_raw_hash"].append(FeatureValue(section_hash, label=name))
         buf.seek(0)
 
@@ -755,7 +754,7 @@ class AzulPluginLiefPE(BinaryPlugin):
                 entries.append("%s.%s" % (module_name, func_name))
 
         # no sorting and use comma separator
-        return md5((",".join(entries)).encode("utf-8")).hexdigest()  # noqa: S303 # nosec B303 B324
+        return md5((",".join(entries)).encode("utf-8")).hexdigest()  # noqa: S324
 
     def _handle_exports(self, pe_file: lief.PE.Binary):
         """Extract export features."""
@@ -815,7 +814,7 @@ class AzulPluginLiefPE(BinaryPlugin):
             return
 
         self.features.setdefault("tag", set()).add("pe_has_overlay")
-        self.features["pe_overlay_hash"] = md5(overlay_data).hexdigest()  # noqa: S303 # nosec B303 B324
+        self.features["pe_overlay_hash"] = md5(overlay_data).hexdigest()  # noqa: S303, S324
         self.features["pe_overlay_size"] = len(overlay_data)
 
         c = self.add_child_with_data(

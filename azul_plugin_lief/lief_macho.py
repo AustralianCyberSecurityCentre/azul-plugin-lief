@@ -611,7 +611,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
             self.features["macho_load_command_type"].append(FV(command_type, label=command_offset))
             self.features["macho_load_command_size"].append(FV(command.size, label=command_offset))
             self.features["macho_load_command_hash"].append(
-                FV(md5(bytearray(command.data)).hexdigest(), label=command_offset)  # noqa: S303 # nosec B303 B324
+                FV(md5(bytearray(command.data)).hexdigest(), label=command_offset)  # noqa: S303, S324
             )
 
             # pass to handler
@@ -656,7 +656,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
         self.features["macho_segment_sections_count"].append(FV(command.numberof_sections, label=name))
         self.features["macho_segment_relocations_count"].append(FV(len(command.relocations), label=name))
         self.features["macho_segment_hash"].append(
-            FV(md5(bytearray(command.content)).hexdigest(), label=name)  # noqa: S303 # nosec B303 B324
+            FV(md5(bytearray(command.content)).hexdigest(), label=name)  # noqa: S303, S324
         )
 
         for section in command.sections:
@@ -693,7 +693,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
                 self.features.setdefault("tag", set()).add("macho_invalid_section")
             else:
                 data = bytearray(section.content)
-                section_hash = md5(data).hexdigest()  # noqa: S303 # nosec B303 B324
+                section_hash = md5(data).hexdigest()  # noqa: S303, S324
                 self.features["macho_section_hash"].append(FV(section_hash, label=sec_name))
 
     def _handle_macho_lc_dylib_command(self, command):
@@ -742,7 +742,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
         if not isinstance(command, MachO.ThreadCommand):
             raise TypeError("Expected ThreadCommand")
 
-        state_hash = md5(bytearray(command.state)).hexdigest()  # noqa: S303 # nosec B303 B324
+        state_hash = md5(bytearray(command.state)).hexdigest()  # noqa: S303, S324
         self.features["macho_thread_state_hash"].append(state_hash)
         self.features["macho_thread_flavor"].append(FV(command.flavor, label=state_hash))
         self.features["macho_thread_count"].append(FV(command.count, label=state_hash))
@@ -821,14 +821,14 @@ class AzulPluginLiefMachO(BinaryPlugin):
         self.features["macho_dyld_info_rebase_offset"].append(offset)
         self.features["macho_dyld_info_rebase_size"].append(FV(size, label=str(offset)))
         self.features["macho_dyld_info_rebase_opcodes_hash"].append(
-            FV(md5(bytearray(command.rebase_opcodes)).hexdigest(), label=str(offset))  # noqa: S303 # nosec B303 B324
+            FV(md5(bytearray(command.rebase_opcodes)).hexdigest(), label=str(offset))  # noqa: S303, S324
         )
 
         offset, size = command.bind
         self.features["macho_dyld_info_bind_offset"].append(offset)
         self.features["macho_dyld_info_bind_size"].append(FV(size, label=str(offset)))
         self.features["macho_dyld_info_bind_opcodes_hash"].append(
-            FV(md5(bytearray(command.bind_opcodes)).hexdigest(), label=str(offset))  # noqa: S303 # nosec B303 B324
+            FV(md5(bytearray(command.bind_opcodes)).hexdigest(), label=str(offset))  # noqa: S303, S324
         )
 
         offset, size = command.weak_bind
@@ -836,7 +836,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
         self.features["macho_dyld_info_weak_bind_size"].append(FV(size, label=str(offset)))
         self.features["macho_dyld_info_weak_bind_opcodes_hash"].append(
             FV(
-                md5(bytearray(command.weak_bind_opcodes)).hexdigest(),  # noqa: S303 # nosec B303 B324
+                md5(bytearray(command.weak_bind_opcodes)).hexdigest(),  # noqa: S303, S324
                 label=str(offset),
             )
         )
@@ -846,7 +846,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
         self.features["macho_dyld_info_lazy_bind_size"].append(FV(size, label=str(offset)))
         self.features["macho_dyld_info_lazy_bind_opcodes_hash"].append(
             FV(
-                md5(bytearray(command.lazy_bind_opcodes)).hexdigest(),  # noqa: S303 # nosec B303 B324
+                md5(bytearray(command.lazy_bind_opcodes)).hexdigest(),  # noqa: S303, S324
                 label=str(offset),
             )
         )

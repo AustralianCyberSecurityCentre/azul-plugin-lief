@@ -518,7 +518,6 @@ class AzulPluginLiefPE(BinaryPlugin):
         self.features["pe_compile_time"] = datetime.utcfromtimestamp(header.time_date_stamps)
         with contextlib.suppress(Exception):
             # Will error if machine is invalid and pe_machine won't be set in this case.
-            header.machine.value
             self.features["pe_machine"] = header.machine.name
 
         self.features["pe_characteristics"] = [c.name for c in header.characteristics_list]

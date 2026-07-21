@@ -10,10 +10,10 @@ information from PE files. Information extracted includes:
 """
 
 import contextlib
-import io
 import itertools
 from datetime import UTC, datetime
 from hashlib import md5, sha256
+from typing import Any
 from uuid import UUID
 
 import lief
@@ -433,7 +433,8 @@ class AzulPluginLiefPE(BinaryPlugin):
         count = self._count_features()
         if count > plugin_executor.MAX_FEATURE_VALUES:
             self._cap_list_or_set_features(
-                less_important_large_features, self.cfg.max_values_per_less_important_feature
+                less_important_large_features,
+                self.cfg.max_values_per_less_important_feature,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
             )
 
         # Half the size of the important features
@@ -441,17 +442,17 @@ class AzulPluginLiefPE(BinaryPlugin):
         if count > plugin_executor.MAX_FEATURE_VALUES:
             self._cap_list_or_set_features(
                 important_features,
-                max(self.cfg.max_values_per_feature // 2, self.cfg.max_values_per_less_important_feature),
+                max(self.cfg.max_values_per_feature // 2, self.cfg.max_values_per_less_important_feature),  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
             )
 
         # Trim the important features to the same level as the less important features.
         count = self._count_features()
         if count > plugin_executor.MAX_FEATURE_VALUES:
-            self._cap_list_or_set_features(important_features, self.cfg.max_values_per_less_important_feature)
+            self._cap_list_or_set_features(important_features, self.cfg.max_values_per_less_important_feature)  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
 
     def execute(self, job: Job):
         """Process any PE file and attempt to parse using LIEF."""
-        self.features = {}
+        self.features: dict[str, Any] = {}
         buf = job.get_data()
         pe_file = PE.parse(buf.get_filepath())
         if not pe_file or isinstance(pe_file, lief.lief_errors):
@@ -515,7 +516,7 @@ class AzulPluginLiefPE(BinaryPlugin):
         """Parse the PE header and optional header and set features."""
         # handle the pe file header
         header = pe_file.header
-        self.features["pe_compile_time"] = datetime.utcfromtimestamp(header.time_date_stamps)
+        self.features["pe_compile_time"] = datetime.fromtimestamp(header.time_date_stamps, tz=UTC)
         with contextlib.suppress(Exception):
             # Will error if machine is invalid and pe_machine won't be set in this case.
             self.features["pe_machine"] = header.machine.name
@@ -600,7 +601,7 @@ class AzulPluginLiefPE(BinaryPlugin):
         if opt_header.magic != PE.PE_TYPE.PE32_PLUS and hasattr(opt_header, "baseof_data"):
             self.features["pe_data_base"] = opt_header.baseof_data
 
-    def _handle_sections(self, pe_file: lief.PE.Binary, buf: io.BytesIO):
+    def _handle_sections(self, pe_file: lief.PE.Binary, buf: StorageProxyFile):
         """Parse sections and set features."""
         self.features["pe_section_count"] = len(pe_file.sections)
 
@@ -625,7 +626,7 @@ class AzulPluginLiefPE(BinaryPlugin):
             name = s.name
             # Check if name can be decoded
             try:
-                name = name.decode()
+                name = name.decode()  # ty: ignore[unresolved-attribute]
             except (UnicodeDecodeError, AttributeError):
                 name = str(name).lstrip("b'").rstrip("'")
 
@@ -738,13 +739,15 @@ class AzulPluginLiefPE(BinaryPlugin):
         entries = []
         for import_module in pe_file.imports:
             # lowercase
-            module_name = import_module.name.lower()
+            module_name = str(import_module.name).lower()
             # strip extension
             if module_name.endswith((".ocx", ".sys", ".dll")):
                 module_name = module_name[:-4]
 
             # attempt to resolve any ordinals (hope lief do same as pefile)
             import_module = PE.resolve_ordinals(import_module)
+            if isinstance(import_module, lief.lief_errors):
+                raise TypeError("Expected import_module to be an Import, got lief_errors")
             for import_function in import_module.entries:
                 if import_function.is_ordinal:
                     func_name = "ord%i" % import_function.ordinal
@@ -762,7 +765,7 @@ class AzulPluginLiefPE(BinaryPlugin):
             return
 
         export = pe_file.get_export()
-        if not export.entries:
+        if export is None or export.entries is None:
             return
 
         self.features["pe_export"] = export.name
@@ -775,7 +778,7 @@ class AzulPluginLiefPE(BinaryPlugin):
         self.features["pe_export_version"] = "{major:d}.{minor:d}".format(
             major=export.major_version, minor=export.minor_version
         )
-        self.features["pe_export_time"] = datetime.utcfromtimestamp(export.timestamp)
+        self.features["pe_export_time"] = datetime.fromtimestamp(export.timestamp, tz=UTC)
         self.features["pe_export_base"] = export.ordinal_base
         self.features["pe_export_count"] = len(export.entries)
 
@@ -804,6 +807,12 @@ class AzulPluginLiefPE(BinaryPlugin):
         overlay_data = bytes(pe_file.overlay)
         if not overlay_data:
             return
+
+        if buf.file_info is None:
+            raise ValueError("Expected buf.file_info to be a Datastream, got None")
+
+        if buf.file_info.size is None:
+            raise ValueError("Expected buf.file_info.size to be an int, got None")
 
         buf.seek(0)
         non_overlay_data = buf.read(buf.file_info.size - len(overlay_data))
@@ -838,7 +847,7 @@ class AzulPluginLiefPE(BinaryPlugin):
 
     def _handle_resources(self, pe_file: lief.PE.Binary):
         """Handle resources."""
-        if not pe_file.has_resources:
+        if not pe_file.has_resources or pe_file.resources is None or pe_file.resources.childs is None:
             return
 
         self.features["pe_resource"] = list()
@@ -866,7 +875,7 @@ class AzulPluginLiefPE(BinaryPlugin):
                         continue
 
                     # Content
-                    res_content = bytes(res_lvl3.content)
+                    res_content = bytes(res_lvl3.content)  # ty: ignore[unresolved-attribute] ty doesn't think content is a real field
                     if is_repeated_byte_file(res_content):
                         # Filter out bad files.
                         continue
@@ -923,7 +932,7 @@ class AzulPluginLiefPE(BinaryPlugin):
                     self.features["pe_resource_language"].add(FeatureValue(res_lang))
 
                     # don't produce excessive numbers of children
-                    if len(self.features["pe_resource"]) > self.cfg.max_resource_extraction:
+                    if len(self.features["pe_resource"]) > self.cfg.max_resource_extraction:  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
                         msg = "pe_resource_extraction_limit_exceeded"
                         if msg not in self.features.get("tag", []):
                             self.features.setdefault("tag", set()).add(msg)
@@ -966,7 +975,7 @@ class AzulPluginLiefPE(BinaryPlugin):
                 self.features.setdefault("tag", set()).add("pe_nonzero_debug_characteristics")
 
             self.features["pe_debug_timestamp"].append(
-                FeatureValue(datetime.utcfromtimestamp(debug.timestamp), label=name)
+                FeatureValue(datetime.fromtimestamp(debug.timestamp, tz=UTC), label=name)
             )
 
             self.features["pe_debug_version"].append(

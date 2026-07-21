@@ -35,8 +35,7 @@ class TestExecute(test_template.TestPlugin):
                 state=State(State.Label.COMPLETED),
                 events=[
                     Event(
-                        entity_type="binary",
-                        entity_id="08c02cd6598f2fa89aa5e5aa67f129bce5ed3996c7a481984c9955f0733bed8d",
+                        sha256="08c02cd6598f2fa89aa5e5aa67f129bce5ed3996c7a481984c9955f0733bed8d",
                         features={
                             "elf_abi_version": [FV(0)],
                             "elf_class": [FV("ELF32")],

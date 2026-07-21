@@ -3,11 +3,12 @@
 import collections
 import enum
 
+# FUTURE: Replace the following link, it is broken.
 # References: https://opensource.apple.com/source/xnu/xnu-6153.61.1
 # EXTERNAL_HEADERS/mach-o/fat.h and
 # EXTERNAL_HEADERS/mach-o/loader.h
-FatHeader = collections.namedtuple("fat_header", ("magic", "nfat_arch"))
-FatArch = collections.namedtuple("fat_arch", ("cputype", "cpusubtype", "offset", "size", "align", "flags"))
+FatHeader = collections.namedtuple("FatHeader", ("magic", "nfat_arch"))
+FatArch = collections.namedtuple("FatArch", ("cputype", "cpusubtype", "offset", "size", "align", "flags"))
 
 CPU_SUBTYPE_MULTIPLE = 0xFFFFFFFF
 CPU_SUBTYPE_MASK = 0xFF000000

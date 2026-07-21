@@ -46,8 +46,7 @@ class TestExecute(test_template.TestPlugin):
                 state=State(State.Label.COMPLETED),
                 events=[
                     Event(
-                        entity_type="binary",
-                        entity_id="b897fa81c7abdb2730bd9713f9053369d40a045c83a6c79d663c91a2bb6b1d03",
+                        sha256="b897fa81c7abdb2730bd9713f9053369d40a045c83a6c79d663c91a2bb6b1d03",
                         features={
                             "macho_code_signature_offset": [FV(23304576)],
                             "macho_code_signature_size": [FV(306832, label="23304576")],
@@ -2459,8 +2458,7 @@ class TestExecute(test_template.TestPlugin):
                 state=State(State.Label.COMPLETED),
                 events=[
                     Event(
-                        entity_type="binary",
-                        entity_id="0d2ee9ade24163613772fdda201af985d852ab506e3d3e7f07fb3fa8b0853560",
+                        sha256="0d2ee9ade24163613772fdda201af985d852ab506e3d3e7f07fb3fa8b0853560",
                         features={
                             "macho_commands_count": [FV(16)],
                             "macho_commands_size": [FV(1320)],
@@ -2862,8 +2860,7 @@ class TestExecute(test_template.TestPlugin):
                 state=State(State.Label.COMPLETED),
                 events=[
                     Event(
-                        entity_type="binary",
-                        entity_id="800941feba455fe148e0b2314c64994cf70fa469064082d8f0622d2e60b79f31",
+                        sha256="800941feba455fe148e0b2314c64994cf70fa469064082d8f0622d2e60b79f31",
                         features={
                             "macho_code_signature_offset": [FV(30368)],
                             "macho_code_signature_size": [FV(30368, label="30368")],

@@ -59,8 +59,7 @@ class TestExecute(test_template.TestPlugin):
                 state=State(State.Label.COMPLETED),
                 events=[
                     Event(
-                        entity_type="binary",
-                        entity_id="67b54e142d22b5a860f8a371bf49339a934bd233ffce16ff54a182c8c78f8dfb",
+                        sha256="67b54e142d22b5a860f8a371bf49339a934bd233ffce16ff54a182c8c78f8dfb",
                         features={
                             "fat_macho_binary_alignment": [
                                 FV(14, label="114688"),
@@ -89,11 +88,9 @@ class TestExecute(test_template.TestPlugin):
                     ),
                     Event(
                         parent=EventParent(
-                            entity_type="binary",
-                            entity_id="67b54e142d22b5a860f8a371bf49339a934bd233ffce16ff54a182c8c78f8dfb",
+                            sha256="67b54e142d22b5a860f8a371bf49339a934bd233ffce16ff54a182c8c78f8dfb",
                         ),
-                        entity_type="binary",
-                        entity_id="09ff8eeda4693f9146e6a5efcb5ddd5c70686a3bcedd3defdfec11c03f6b352a",
+                        sha256="09ff8eeda4693f9146e6a5efcb5ddd5c70686a3bcedd3defdfec11c03f6b352a",
                         relationship={
                             "action": "extracted",
                             "offset": "0x4000",
@@ -110,11 +107,9 @@ class TestExecute(test_template.TestPlugin):
                     ),
                     Event(
                         parent=EventParent(
-                            entity_type="binary",
-                            entity_id="67b54e142d22b5a860f8a371bf49339a934bd233ffce16ff54a182c8c78f8dfb",
+                            sha256="67b54e142d22b5a860f8a371bf49339a934bd233ffce16ff54a182c8c78f8dfb",
                         ),
-                        entity_type="binary",
-                        entity_id="ed53fd308f8997c8437a664dcff4dcf2cae9c54e6fc1e208bdb6aa56d065d4d3",
+                        sha256="ed53fd308f8997c8437a664dcff4dcf2cae9c54e6fc1e208bdb6aa56d065d4d3",
                         relationship={
                             "action": "extracted",
                             "offset": "0x1c000",
@@ -131,11 +126,9 @@ class TestExecute(test_template.TestPlugin):
                     ),
                     Event(
                         parent=EventParent(
-                            entity_type="binary",
-                            entity_id="67b54e142d22b5a860f8a371bf49339a934bd233ffce16ff54a182c8c78f8dfb",
+                            sha256="67b54e142d22b5a860f8a371bf49339a934bd233ffce16ff54a182c8c78f8dfb",
                         ),
-                        entity_type="binary",
-                        entity_id="a9aa12e8d9cc5bc3af94ec4c2353ddd93f396fc14cf665a99abfb91dd4f9a371",
+                        sha256="a9aa12e8d9cc5bc3af94ec4c2353ddd93f396fc14cf665a99abfb91dd4f9a371",
                         relationship={
                             "action": "extracted",
                             "offset": "0x34000",

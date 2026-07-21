@@ -50,7 +50,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("3305728")],
                             "pe_code_base": [FV("4096")],
                             "pe_code_size": [FV("1921024")],
-                            "pe_compile_time": [FV("2017-04-20T08:33:33")],
+                            "pe_compile_time": [FV("2017-04-20T08:33:33+00:00")],
                             "pe_debug_characteristics": [
                                 FV("0", label="CODEVIEW"),
                                 FV("0", label="ILTCG"),
@@ -74,10 +74,10 @@ class TestExecute(test_template.TestPlugin):
                                 FV("65", label="CODEVIEW"),
                             ],
                             "pe_debug_timestamp": [
-                                FV("2017-04-20T08:33:33", label="CODEVIEW"),
-                                FV("2017-04-20T08:33:33", label="ILTCG"),
-                                FV("2017-04-20T08:33:33", label="POGO"),
-                                FV("2017-04-20T08:33:33", label="VC_FEATURE"),
+                                FV("2017-04-20T08:33:33+00:00", label="CODEVIEW"),
+                                FV("2017-04-20T08:33:33+00:00", label="ILTCG"),
+                                FV("2017-04-20T08:33:33+00:00", label="POGO"),
+                                FV("2017-04-20T08:33:33+00:00", label="VC_FEATURE"),
                             ],
                             "pe_debug_type": [
                                 FV("CODEVIEW", offset=2397004, size=65),
@@ -2556,7 +2556,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="31f5a23d82cd51dbf2553896a5c5f5a420c3d592dca859c866a33422bc647c93",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_overlay")]},
@@ -2568,7 +2568,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="2a7ebbe9fdfd6a88889bd14a5a4a075f973666d77e7229f2c869c11b28fafcf2",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_parent_has_overlay")]},
@@ -2580,7 +2580,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="fbeb3be87e80cb8e1d2af3d8140796c1bb80c6c7056f60897088ff9e355c3867",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2592,7 +2592,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="f64ccc0582bc7c66af8b40049e485e8e241335261ec95ace909293ba50b2e4a3",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2604,7 +2604,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="652988945185cf5d604d9b48de66288d82d8ed0acdd134398e90d002d2d9fc72",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2616,7 +2616,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="0b0e16c38a3d5a85566e67b1d9a7e720e4dee27e163b06099d3d7dfa5dbed9ee",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2628,7 +2628,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="368f9cb089d206a8b61251f0c85eeda97ee08a56b33be8579246e964d3af6169",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2640,7 +2640,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="6440c3a38dcfb81d45bc6be31b776fdae116dd7a2933b407b67132f6cfa0e6eb",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2652,7 +2652,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="9882a8462ce9de3cc9a5d0ca48c8c4f7ca97f1f846f0c10e6655e33c9734b152",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2664,7 +2664,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="322e92d75b3fec9e16b81466f4cf111d298b80812d5b238f4ee032c025a02050",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2676,7 +2676,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="8db6df648274a0fc3d28430367216e1c17c364ca613066cbb0e133637e92ba62",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2688,7 +2688,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="f9c81ce9b4176b305c554a15f0ca2b98b11be76c1f13ef22169999aa07e9612f",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2700,7 +2700,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="601635482a9b1864ea0c61ce0282c5c9fe1d014aa95dbb4f60770f1c2b6df3da",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2712,7 +2712,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="2bf742d2beb4c56dd6eb68347dd8ee28da85bed9e6d165b36c6edb91da01d5d6",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2724,7 +2724,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="cfc4ff9e46fbb61f61b68f36adc6593b137233d1cbaa50fe37e5653f0cb20396",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2736,7 +2736,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="c4a6e3a7a346baecb09a0c49268eb44f388382a7866a4e912b53d48fa3b34c26",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2748,7 +2748,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="f273e554605a89aa0994c9d42bc2569be3db5b19b2900dacb30f3218ed1174a0",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2760,7 +2760,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="ebaf4bcc0f0d7ca9a3458ea52520d2dd10811069241940b9b2e79ac1a4c3ca5c",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2777,7 +2777,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="e7c0005285d1ab59732d5f99f77a9bdd6342b01cf44437ebd7a07611a227e272",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2794,7 +2794,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="abdf36bde89a26349f5741c17c235dacea88d441d8662ba16a598dc50c3c4864",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2806,7 +2806,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="966c1dd3042bbb3d7c44b486157632461f9ff3f6213c19b53afe2da5b58040ae",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2818,7 +2818,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="ab61a12cee58d31ab771798691e9c01b7c776b05087a120caa79eefb7b490efa",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2830,7 +2830,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="486e25e98b12638a41c1386a4d1061665b94c27f77832296669a49caf6c76afe",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2842,7 +2842,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="3ee612e459ba6140bb70bd31686acf09207a6b3d431bb2eef7a31f0b044b417b",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2854,7 +2854,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="e5b7014cd28eff3def223ff878d03a7b6fe2e4ecd0f072144da153fd493270f3",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2866,7 +2866,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="9b5d4da777d74825570afafebbb744fd8b1e18fd91406a79a4e5c2515bd445d1",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2883,7 +2883,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="7eb43eeaaf79568d009b4ea4dbb9ef699352bd54c76863d1bbf3671b79abe603",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2900,7 +2900,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="d9aaeb77f7c1487fdfaef7a75744e3fb0c8815433d0e859804f8df83d33624d8",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2917,7 +2917,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="6e113fd8e9f3156ae68251c6076beb9b59fe29e589d06398e7019802521f69d3",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2934,7 +2934,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="4cf716efaf68e0cb2ec45ec55d291050b5712b05653cae68edbb999f803d2a98",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2951,7 +2951,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="d91dc4e26fd86def5ee907c72f32457bea07d21fa618012245f641d08501548d",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -2968,7 +2968,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="05e0d5787611ed4f643733e3e6e62d00f426422b5d3e443ceebac22e9d294bc4",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -3037,7 +3037,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("0")],
                             "pe_code_base": [FV("8192")],
                             "pe_code_size": [FV("512")],
-                            "pe_compile_time": [FV("1970-01-01T00:00:00")],
+                            "pe_compile_time": [FV("1970-01-01T00:00:00+00:00")],
                             "pe_data_base": [FV("12288")],
                             "pe_dos_stub": [
                                 FV(
@@ -3115,7 +3115,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("0")],
                             "pe_code_base": [FV("8192")],
                             "pe_code_size": [FV("766464")],
-                            "pe_compile_time": [FV("2024-01-25T01:11:43")],
+                            "pe_compile_time": [FV("2024-01-25T01:11:43+00:00")],
                             "pe_data_base": [FV("778240")],
                             "pe_debug_characteristics": [FV("0", label="CODEVIEW"), FV("0", label="PDBCHECKSUM")],
                             "pe_debug_codeview_age": [FV("1")],
@@ -3125,8 +3125,8 @@ class TestExecute(test_template.TestPlugin):
                             "pe_debug_offset": [FV("767192", label="CODEVIEW"), FV("767476", label="PDBCHECKSUM")],
                             "pe_debug_size": [FV("284", label="CODEVIEW"), FV("39", label="PDBCHECKSUM")],
                             "pe_debug_timestamp": [
-                                FV("1970-01-01T00:00:00", label="PDBCHECKSUM"),
-                                FV("2064-12-20T09:44:04", label="CODEVIEW"),
+                                FV("1970-01-01T00:00:00+00:00", label="PDBCHECKSUM"),
+                                FV("2064-12-20T09:44:04+00:00", label="CODEVIEW"),
                             ],
                             "pe_debug_type": [
                                 FV("CODEVIEW", offset=767192, size=284),
@@ -3277,7 +3277,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="aad789d4316097b3c489df488695a0ae6bbbf433910877fff4de90802e8f7a63",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -3294,7 +3294,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="1d418a7bd02da5c83c956b4b84361ed014a7247a81b9e03ca4fd9fe2fe966acf",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -3306,7 +3306,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="eeee2584dc0a7511f2d4881be5228dfa824dac6e51271b90bad3b0acfe30d3f1",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},

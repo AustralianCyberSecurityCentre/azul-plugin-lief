@@ -51,7 +51,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("507855")],
                             "pe_code_base": [FV("4096")],
                             "pe_code_size": [FV("272384")],
-                            "pe_compile_time": [FV("2022-07-18T14:54:12")],
+                            "pe_compile_time": [FV("2022-07-18T14:54:12+00:00")],
                             "pe_data_base": [FV("278528")],
                             "pe_debug_characteristics": [
                                 FV("0", label="CODEVIEW"),
@@ -73,9 +73,9 @@ class TestExecute(test_template.TestPlugin):
                                 FV("964", label="POGO"),
                             ],
                             "pe_debug_timestamp": [
-                                FV("2022-07-18T14:54:12", label="CODEVIEW"),
-                                FV("2022-07-18T14:54:12", label="POGO"),
-                                FV("2022-07-18T14:54:12", label="VC_FEATURE"),
+                                FV("2022-07-18T14:54:12+00:00", label="CODEVIEW"),
+                                FV("2022-07-18T14:54:12+00:00", label="POGO"),
+                                FV("2022-07-18T14:54:12+00:00", label="VC_FEATURE"),
                             ],
                             "pe_debug_type": [
                                 FV("CODEVIEW", offset=388880, size=60),
@@ -918,7 +918,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="68569b3e94f6a2510c9f11717520f04308c5368ff0414505568cbd44bcc6c5f5",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_overlay")]},
@@ -930,7 +930,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="c9feafa7b52bd692c0852c4e38f6ce700c09f95ecd363182f224529ef7f159c1",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_parent_has_overlay")]},
@@ -942,7 +942,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="e8467c5ad34c385b9ebb3e95a410d07f954ca570a474b42247868fa4d8be51d1",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -959,7 +959,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="c6856898b42d40bd117b74e7300b1ea523f5ada29f90f904853df7b20a45005d",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -1006,7 +1006,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("20186")],
                             "pe_code_base": [FV("4096")],
                             "pe_code_size": [FV("5120")],
-                            "pe_compile_time": [FV("2006-07-28T07:57:11")],
+                            "pe_compile_time": [FV("2006-07-28T07:57:11+00:00")],
                             "pe_data_base": [FV("12288")],
                             "pe_dos_stub": [
                                 FV(
@@ -1040,7 +1040,7 @@ class TestExecute(test_template.TestPlugin):
                                 FV("6928", label="?UpdateProc@CUpdate@@CAHXZ"),
                                 FV("7596", label="?Update@CUpdate@@SAHXZ"),
                             ],
-                            "pe_export_time": [FV("2006-07-28T07:57:11")],
+                            "pe_export_time": [FV("2006-07-28T07:57:11+00:00")],
                             "pe_export_version": [FV("0.0")],
                             "pe_file_alignment": [FV("512")],
                             "pe_header_size": [FV("1024")],
@@ -1270,7 +1270,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="0e4523852d8e5e02f2e27dbb41cbdf0004b20f27b6c519c9e6816cfb14dd5f7d",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_overlay")]},
@@ -1282,7 +1282,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="662689c0f42ea653b63c97a3296317d6667da780344cb9eae82a708e8ef06f65",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_parent_has_overlay")]},

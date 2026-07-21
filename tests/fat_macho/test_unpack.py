@@ -54,7 +54,7 @@ FAT_MACHO_HEADER_RESULT = (
     [
         FatArch(
             cputype=CPUType.ARM,
-            cpusubtype=CPUSubType[CPUType.ARM].ARM_V7,
+            cpusubtype=CPUSubType[CPUType.ARM].ARM_V7,  # ty: ignore[unresolved-attribute]
             offset=16384,
             size=23611408,
             align=14,
@@ -62,7 +62,7 @@ FAT_MACHO_HEADER_RESULT = (
         ),
         FatArch(
             cputype=CPUType.ARM,
-            cpusubtype=CPUSubType[CPUType.ARM].ARM_V7S,
+            cpusubtype=CPUSubType[CPUType.ARM].ARM_V7S,  # ty: ignore[unresolved-attribute]
             offset=23642112,
             size=23611392,
             align=14,
@@ -70,7 +70,7 @@ FAT_MACHO_HEADER_RESULT = (
         ),
         FatArch(
             cputype=CPUType.ARM64,
-            cpusubtype=CPUSubType[CPUType.ARM64].ARM64_ALL,
+            cpusubtype=CPUSubType[CPUType.ARM64].ARM64_ALL,  # ty: ignore[unresolved-attribute]
             offset=47267840,
             size=27595216,
             align=14,
@@ -94,7 +94,7 @@ FAT_MACHO_HEADER_LE_RESULT = (
     [
         FatArch(
             cputype=CPUType.ARM,
-            cpusubtype=CPUSubType[CPUType.ARM].ARM_V7,
+            cpusubtype=CPUSubType[CPUType.ARM].ARM_V7,  # ty: ignore[unresolved-attribute]
             offset=16384,
             size=23611408,
             align=14,
@@ -102,7 +102,7 @@ FAT_MACHO_HEADER_LE_RESULT = (
         ),
         FatArch(
             cputype=CPUType.ARM,
-            cpusubtype=CPUSubType[CPUType.ARM].ARM_V7S,
+            cpusubtype=CPUSubType[CPUType.ARM].ARM_V7S,  # ty: ignore[unresolved-attribute]
             offset=23642112,
             size=23611392,
             align=14,
@@ -110,7 +110,7 @@ FAT_MACHO_HEADER_LE_RESULT = (
         ),
         FatArch(
             cputype=CPUType.ARM64,
-            cpusubtype=CPUSubType[CPUType.ARM64].ARM64_ALL,
+            cpusubtype=CPUSubType[CPUType.ARM64].ARM64_ALL,  # ty: ignore[unresolved-attribute]
             offset=47267840,
             size=27595216,
             align=14,
@@ -150,7 +150,7 @@ FAT_MACHO_HEADER_64BIT_LIB_SUBTYPE_RESULT = (
     [
         FatArch(
             cputype=CPUType.X86_64,
-            cpusubtype=CPUSubType[CPUType.X86_64].X86_64_ALL,
+            cpusubtype=CPUSubType[CPUType.X86_64].X86_64_ALL,  # ty: ignore[unresolved-attribute]
             offset=4096,
             size=65296,
             align=12,
@@ -158,7 +158,7 @@ FAT_MACHO_HEADER_64BIT_LIB_SUBTYPE_RESULT = (
         ),
         FatArch(
             cputype=CPUType.X86,
-            cpusubtype=CPUSubType[CPUType.X86].I386_ALL,
+            cpusubtype=CPUSubType[CPUType.X86].I386_ALL,  # ty: ignore[unresolved-attribute]
             offset=69632,
             size=58768,
             align=12,

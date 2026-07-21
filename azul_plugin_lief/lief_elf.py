@@ -21,7 +21,6 @@ from azul_runner import (
     cmdline_run,
 )
 from elftools.elf import descriptions, enums
-from elftools.elf.constants import SH_FLAGS
 from lief import ELF
 from lief.ELF import AndroidIdent, CorePrPsInfo, NoteAbi
 
@@ -269,7 +268,7 @@ class LiefELF(BinaryPlugin):
             flags_str = "".join(flags_str)
             self.features["elf_segment_flags"].append(FV(flags_str, label=segment_num))
 
-            segment_sections = ", ".join([section.name for section in segment.sections])
+            segment_sections = ", ".join([str(section.name) for section in segment.sections])
             self.features["elf_segment_sections"].append(FV(segment_sections, label=segment_num))
 
     def _handle_dynamic_symbols(self, elf_file: ELF.Binary):
@@ -341,6 +340,8 @@ class LiefELF(BinaryPlugin):
             # If the note name is invalid unicode drop it.
             with contextlib.suppress(UnicodeDecodeError):
                 self.features["elf_note_name"].append(FV(note.name, label=note_index))
+            if not hasattr(note.type, "__name__"):
+                raise AttributeError("note.type is missing a __name__ attribute")
             type_str = note.type.__name__
             self.features["elf_note_type"].append(FV(type_str, label=note_index))
             description_str = " ".join(map(lambda e: "{:02x}".format(e), note.description))
@@ -351,6 +352,8 @@ class LiefELF(BinaryPlugin):
                     version_str = "{:d}.{:d}.{:d}".format(version[0], version[1], version[2])
                     self.features["elf_note_version"].append(FV(version_str, label=note_index))
                 if note.abi:
+                    if not hasattr(note.abi, "__name__"):
+                        raise AttributeError("note.abi is missing a __name__ attribute")
                     self.features["elf_note_abi"].append(FV(str(note.abi.__name__), label=note_index))
 
             if isinstance(note, AndroidIdent):
@@ -369,14 +372,15 @@ class LiefELF(BinaryPlugin):
             # Coredumps on Linux are ELFs - there is a large document in here with e.g. register contents and
             # the like (CorePrStatus), but instead just extracting some core features:
             if isinstance(note, CorePrPsInfo):
-                self.features["elf_note_coredump_filename"].append(FV(note.info.filename_stripped, label=note_index))
-                self.features["elf_note_coredump_flags"].append(FV(note.info.flag, label=note_index))
-                self.features["elf_note_coredump_gid"].append(FV(note.info.gid, label=note_index))
-                self.features["elf_note_coredump_pgrp"].append(FV(note.info.pgrp, label=note_index))
-                self.features["elf_note_coredump_pid"].append(FV(note.info.pid, label=note_index))
-                self.features["elf_note_coredump_ppid"].append(FV(note.info.ppid, label=note_index))
-                self.features["elf_note_coredump_sid"].append(FV(note.info.sid, label=note_index))
-                self.features["elf_note_coredump_uid"].append(FV(note.info.uid, label=note_index))
+                # It is possible that one or more of the following fields is `None`. Instead of checking every non-None here, let Bedrock raise the exception if tries to encode it.
+                self.features["elf_note_coredump_filename"].append(FV(note.info.filename_stripped, label=note_index))  # ty: ignore[unresolved-attribute]
+                self.features["elf_note_coredump_flags"].append(FV(note.info.flag, label=note_index))  # ty: ignore[unresolved-attribute]
+                self.features["elf_note_coredump_gid"].append(FV(note.info.gid, label=note_index))  # ty: ignore[unresolved-attribute]
+                self.features["elf_note_coredump_pgrp"].append(FV(note.info.pgrp, label=note_index))  # ty: ignore[unresolved-attribute]
+                self.features["elf_note_coredump_pid"].append(FV(note.info.pid, label=note_index))  # ty: ignore[unresolved-attribute]
+                self.features["elf_note_coredump_ppid"].append(FV(note.info.ppid, label=note_index))  # ty: ignore[unresolved-attribute]
+                self.features["elf_note_coredump_sid"].append(FV(note.info.sid, label=note_index))  # ty: ignore[unresolved-attribute]
+                self.features["elf_note_coredump_uid"].append(FV(note.info.uid, label=note_index))  # ty: ignore[unresolved-attribute]
 
     # Helper functions
 
@@ -385,7 +389,7 @@ class LiefELF(BinaryPlugin):
         self._append_desc_by_feature(feature, value, None)
         return self.features[feature]
 
-    def _append_desc_by_feature(self, feature, value, label: str | None):
+    def _append_desc_by_feature(self, feature, value, label: str | bytes | None):
         value = int(value)
         if label:
             label = str(label)
@@ -398,8 +402,9 @@ class LiefELF(BinaryPlugin):
         except (KeyError, TypeError):
             self.features[feature].append(FV("<unknown>", label=label))
 
-    def _append_flags_by_feature(self, feature: str, flag_list: list[SH_FLAGS], label: str):
+    def _append_flags_by_feature(self, feature: str, flag_list: list[ELF.Section.FLAGS], label: str | bytes):
         d_func = getattr(descriptions, FLAG_DESCRIPTION[feature])
+        label = str(label)
         flags = []
         try:
             for flag in flag_list:

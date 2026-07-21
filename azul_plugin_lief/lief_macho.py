@@ -55,7 +55,7 @@ def get_cpu_subtype(cpu_type, subtype):
     try:
         flags = subtype & const.CPU_SUBTYPE_MASK
         s = subtype ^ flags
-        return const.CPUSubType[int(cpu_type)](s).name
+        return const.CPUSubType[const.CPUType(int(cpu_type))](s).name
     except (KeyError, TypeError):
         return str(subtype)
 
@@ -124,7 +124,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
         Feature(name="macho_section_flag", desc="Flags of section", type=FeatureType.String),
         Feature(name="macho_section_hash", desc="MD5 hash of data in section", type=FeatureType.String),
         # Dylib command features
-        Feature(name="macho_dylib_name", desc="Name of dylib", type=Filepath),
+        Feature(name="macho_dylib_name", desc="Name of dylib", type=Filepath),  # ty: ignore[invalid-argument-type] For elastic parsing
         Feature(name="macho_dylib_timestamp", desc="Name of dylib", type=FeatureType.Integer),
         Feature(name="macho_dylib_current_version", desc="Current version of dylib", type=FeatureType.String),
         Feature(name="macho_dylib_compat_version", desc="Compatibility version of dylib", type=FeatureType.String),
@@ -401,6 +401,8 @@ class AzulPluginLiefMachO(BinaryPlugin):
 
             if isinstance(macho_file, MachO.FatBinary) and macho_file.size == 1:
                 macho_file = macho_file.at(0)
+                if macho_file is None:
+                    raise ValueError("Expected macho_file to be a MachO.FatBinary, got None")
                 if macho_file.fat_offset != 0:
                     return State(
                         State.Label.OPT_OUT, "macho_fat_offset", "lief has limited support for fat macho files"

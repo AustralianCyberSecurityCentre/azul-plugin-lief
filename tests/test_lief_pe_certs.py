@@ -918,7 +918,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="68569b3e94f6a2510c9f11717520f04308c5368ff0414505568cbd44bcc6c5f5",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_overlay")]},
@@ -930,7 +930,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="c9feafa7b52bd692c0852c4e38f6ce700c09f95ecd363182f224529ef7f159c1",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_parent_has_overlay")]},
@@ -942,7 +942,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="e8467c5ad34c385b9ebb3e95a410d07f954ca570a474b42247868fa4d8be51d1",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -959,7 +959,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="c6856898b42d40bd117b74e7300b1ea523f5ada29f90f904853df7b20a45005d",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_resource")]},
@@ -1270,7 +1270,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="0e4523852d8e5e02f2e27dbb41cbdf0004b20f27b6c519c9e6816cfb14dd5f7d",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_overlay")]},
@@ -1282,7 +1282,7 @@ class TestExecute(test_template.TestPlugin):
                         data=[
                             EventData(
                                 hash="662689c0f42ea653b63c97a3296317d6667da780344cb9eae82a708e8ef06f65",
-                                label="content",
+                                label=DataLabel.CONTENT,
                             )
                         ],
                         features={"tag": [FV("pe_parent_has_overlay")]},

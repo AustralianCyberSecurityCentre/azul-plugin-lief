@@ -50,8 +50,7 @@ class TestExecute(test_template.TestPlugin):
                 state=State(State.Label.COMPLETED),
                 events=[
                     Event(
-                        entity_type="binary",
-                        entity_id="8efa1dc285627d92c20dc840e0a53544cfe64098af6608772c06c7c5734057c0",
+                        sha256="8efa1dc285627d92c20dc840e0a53544cfe64098af6608772c06c7c5734057c0",
                         features={"tag": [FV("elf_invalid")]},
                     )
                 ],
@@ -77,8 +76,7 @@ class TestExecute(test_template.TestPlugin):
                 state=State(State.Label.COMPLETED),
                 events=[
                     Event(
-                        entity_type="binary",
-                        entity_id="5143c4a7605dc4188937eb04def324629886e7d3ce884473f700852d8faf5581",
+                        sha256="5143c4a7605dc4188937eb04def324629886e7d3ce884473f700852d8faf5581",
                         features={
                             "elf_abi_version": [FV(0)],
                             "elf_class": [FV("ELF64")],
@@ -1016,8 +1014,7 @@ class TestExecute(test_template.TestPlugin):
                 state=State(State.Label.COMPLETED),
                 events=[
                     Event(
-                        entity_type="binary",
-                        entity_id="4c4100d2dafcc5118e73803761ae7cfd7d71d07fac320be3ad012dfe5194ecb7",
+                        sha256="4c4100d2dafcc5118e73803761ae7cfd7d71d07fac320be3ad012dfe5194ecb7",
                         features={
                             "elf_abi_version": [FV(0)],
                             "elf_class": [FV("ELF64")],

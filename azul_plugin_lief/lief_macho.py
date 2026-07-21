@@ -10,6 +10,7 @@ information from Mach-O files. Information extracted includes:
 
 from hashlib import md5
 from uuid import UUID
+from typing import Any
 
 import lief
 from azul_runner import (
@@ -384,7 +385,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
 
     def execute(self, job: Job):
         """Process any Mach-O file and attempt to parse using LIEF."""
-        self.features = {}
+        self.features: dict[str, Any] = {}
         buf = job.get_data()
         macho_file = MachO.parse(buf.get_filepath(), config=MachO.ParserConfig.deep)
         if not macho_file or isinstance(macho_file, lief.lief_errors):

@@ -14,6 +14,7 @@ import itertools
 from datetime import UTC, datetime
 from hashlib import md5, sha256
 from uuid import UUID
+from typing import Any
 
 import lief
 from azul_runner import (
@@ -451,7 +452,7 @@ class AzulPluginLiefPE(BinaryPlugin):
 
     def execute(self, job: Job):
         """Process any PE file and attempt to parse using LIEF."""
-        self.features = {}
+        self.features: dict[str, Any] = {}
         buf = job.get_data()
         pe_file = PE.parse(buf.get_filepath())
         if not pe_file or isinstance(pe_file, lief.lief_errors):

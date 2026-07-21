@@ -9,6 +9,7 @@ information from ELF files. Information extracted includes:
 
 import contextlib
 from hashlib import sha256
+from typing import Any
 
 import lief
 from azul_runner import (
@@ -159,7 +160,7 @@ class LiefELF(BinaryPlugin):
 
     def execute(self, job: Job):
         """Process any ELF file and attempt to parse using LIEF."""
-        self.features = {}
+        self.features: dict[str, Any] = {}
 
         buf = job.get_data()
 

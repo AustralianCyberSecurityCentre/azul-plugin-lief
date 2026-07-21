@@ -50,7 +50,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("3305728")],
                             "pe_code_base": [FV("4096")],
                             "pe_code_size": [FV("1921024")],
-                            "pe_compile_time": [FV("2017-04-20T08:33:33")],
+                            "pe_compile_time": [FV("2017-04-20T08:33:33+00:00")],
                             "pe_debug_characteristics": [
                                 FV("0", label="CODEVIEW"),
                                 FV("0", label="ILTCG"),
@@ -74,10 +74,10 @@ class TestExecute(test_template.TestPlugin):
                                 FV("65", label="CODEVIEW"),
                             ],
                             "pe_debug_timestamp": [
-                                FV("2017-04-20T08:33:33", label="CODEVIEW"),
-                                FV("2017-04-20T08:33:33", label="ILTCG"),
-                                FV("2017-04-20T08:33:33", label="POGO"),
-                                FV("2017-04-20T08:33:33", label="VC_FEATURE"),
+                                FV("2017-04-20T08:33:33+00:00", label="CODEVIEW"),
+                                FV("2017-04-20T08:33:33+00:00", label="ILTCG"),
+                                FV("2017-04-20T08:33:33+00:00", label="POGO"),
+                                FV("2017-04-20T08:33:33+00:00", label="VC_FEATURE"),
                             ],
                             "pe_debug_type": [
                                 FV("CODEVIEW", offset=2397004, size=65),
@@ -3037,7 +3037,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("0")],
                             "pe_code_base": [FV("8192")],
                             "pe_code_size": [FV("512")],
-                            "pe_compile_time": [FV("1970-01-01T00:00:00")],
+                            "pe_compile_time": [FV("1970-01-01T00:00:00+00:00")],
                             "pe_data_base": [FV("12288")],
                             "pe_dos_stub": [
                                 FV(
@@ -3115,7 +3115,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("0")],
                             "pe_code_base": [FV("8192")],
                             "pe_code_size": [FV("766464")],
-                            "pe_compile_time": [FV("2024-01-25T01:11:43")],
+                            "pe_compile_time": [FV("2024-01-25T01:11:43+00:00")],
                             "pe_data_base": [FV("778240")],
                             "pe_debug_characteristics": [FV("0", label="CODEVIEW"), FV("0", label="PDBCHECKSUM")],
                             "pe_debug_codeview_age": [FV("1")],
@@ -3125,8 +3125,8 @@ class TestExecute(test_template.TestPlugin):
                             "pe_debug_offset": [FV("767192", label="CODEVIEW"), FV("767476", label="PDBCHECKSUM")],
                             "pe_debug_size": [FV("284", label="CODEVIEW"), FV("39", label="PDBCHECKSUM")],
                             "pe_debug_timestamp": [
-                                FV("1970-01-01T00:00:00", label="PDBCHECKSUM"),
-                                FV("2064-12-20T09:44:04", label="CODEVIEW"),
+                                FV("1970-01-01T00:00:00+00:00", label="PDBCHECKSUM"),
+                                FV("2064-12-20T09:44:04+00:00", label="CODEVIEW"),
                             ],
                             "pe_debug_type": [
                                 FV("CODEVIEW", offset=767192, size=284),

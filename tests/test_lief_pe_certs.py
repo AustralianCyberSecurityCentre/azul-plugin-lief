@@ -51,7 +51,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("507855")],
                             "pe_code_base": [FV("4096")],
                             "pe_code_size": [FV("272384")],
-                            "pe_compile_time": [FV("2022-07-18T14:54:12")],
+                            "pe_compile_time": [FV("2022-07-18T14:54:12+00:00")],
                             "pe_data_base": [FV("278528")],
                             "pe_debug_characteristics": [
                                 FV("0", label="CODEVIEW"),
@@ -73,9 +73,9 @@ class TestExecute(test_template.TestPlugin):
                                 FV("964", label="POGO"),
                             ],
                             "pe_debug_timestamp": [
-                                FV("2022-07-18T14:54:12", label="CODEVIEW"),
-                                FV("2022-07-18T14:54:12", label="POGO"),
-                                FV("2022-07-18T14:54:12", label="VC_FEATURE"),
+                                FV("2022-07-18T14:54:12+00:00", label="CODEVIEW"),
+                                FV("2022-07-18T14:54:12+00:00", label="POGO"),
+                                FV("2022-07-18T14:54:12+00:00", label="VC_FEATURE"),
                             ],
                             "pe_debug_type": [
                                 FV("CODEVIEW", offset=388880, size=60),
@@ -1006,7 +1006,7 @@ class TestExecute(test_template.TestPlugin):
                             "pe_checksum": [FV("20186")],
                             "pe_code_base": [FV("4096")],
                             "pe_code_size": [FV("5120")],
-                            "pe_compile_time": [FV("2006-07-28T07:57:11")],
+                            "pe_compile_time": [FV("2006-07-28T07:57:11+00:00")],
                             "pe_data_base": [FV("12288")],
                             "pe_dos_stub": [
                                 FV(
@@ -1040,7 +1040,7 @@ class TestExecute(test_template.TestPlugin):
                                 FV("6928", label="?UpdateProc@CUpdate@@CAHXZ"),
                                 FV("7596", label="?Update@CUpdate@@SAHXZ"),
                             ],
-                            "pe_export_time": [FV("2006-07-28T07:57:11")],
+                            "pe_export_time": [FV("2006-07-28T07:57:11+00:00")],
                             "pe_export_version": [FV("0.0")],
                             "pe_file_alignment": [FV("512")],
                             "pe_header_size": [FV("1024")],

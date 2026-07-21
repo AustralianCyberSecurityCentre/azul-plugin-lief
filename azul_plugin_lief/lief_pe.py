@@ -874,7 +874,7 @@ class AzulPluginLiefPE(BinaryPlugin):
                         continue
 
                     # Content
-                    res_content = bytes(res_lvl3.content) # ty: ignore[unresolved-attribute] ty doesn't think content is a real field
+                    res_content = bytes(res_lvl3.content)  # ty: ignore[unresolved-attribute] ty doesn't think content is a real field
                     if is_repeated_byte_file(res_content):
                         # Filter out bad files.
                         continue

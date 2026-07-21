@@ -13,8 +13,8 @@ import contextlib
 import itertools
 from datetime import UTC, datetime
 from hashlib import md5, sha256
-from uuid import UUID
 from typing import Any
+from uuid import UUID
 
 import lief
 from azul_runner import (

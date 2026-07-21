@@ -9,8 +9,8 @@ information from Mach-O files. Information extracted includes:
 """
 
 from hashlib import md5
-from uuid import UUID
 from typing import Any
+from uuid import UUID
 
 import lief
 from azul_runner import (

@@ -35,7 +35,7 @@ BIG_INT_MAX = (1 << 63) - 1
 def enum_wrapper(macho_enum):
     """Wrap a macho enum to allow getting the name of the enum rather than the Enum itself."""
 
-    def get_enum_name_or_none(value: int, default=None) -> str | None:
+    def get_enum_name_or_none(value: int, default: None | str = None) -> str | None:
         """Get the name of an enum or the default value if that fails."""
         try:
             return macho_enum.from_value(value).__name__
@@ -51,13 +51,13 @@ LOAD_COMMAND_TYPES = enum_wrapper(MachO.LoadCommand.TYPE)
 
 
 # lief doesn't map subtypes, so reuse consts in fat_macho project
-def get_cpu_subtype(cpu_type, subtype):
+def get_cpu_subtype(cpu_type, subtype) -> str:
     """Get the human readable CPU subtype from the field."""
     try:
         flags = subtype & const.CPU_SUBTYPE_MASK
         s = subtype ^ flags
         return const.CPUSubType[const.CPUType(int(cpu_type))](s).name
-    except (KeyError, TypeError):
+    except (KeyError, TypeError, ValueError):
         return str(subtype)
 
 
@@ -390,6 +390,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
         macho_file = MachO.parse(buf.get_filepath(), config=MachO.ParserConfig.deep)
         if not macho_file or isinstance(macho_file, lief.lief_errors):
             # if a lief error occured.
+            # TODO Status code
             self.features["tag"] = "macho_invalid"
         else:
             # we get a MachO.FatBinary from parse()

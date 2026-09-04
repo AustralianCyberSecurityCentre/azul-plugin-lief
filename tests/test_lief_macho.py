@@ -3497,3 +3497,60 @@ class TestExecute(test_template.TestPlugin):
                 ],
             ),
         )
+
+    def test_macho_against_strange_files(self):
+        """Regression test on a MACHO file that checks for some enum validation."""
+        result = self.do_execution(
+            data_in=[
+                (
+                    DataLabel.CONTENT,
+                    self.load_test_file_bytes(
+                        "4071996d927ade8e31f4b64e6a43346f5ffc6509927f55e739c3a45f2b445d49",
+                        "VT Sample that is missing header.cpu_subtype",
+                    ),
+                )
+            ],
+            verify_input_content=False,
+        )
+        self.assertJobResult(
+            result,
+            JobResult(
+                state=State(State.Label.COMPLETED),
+                events=[
+                    Event(
+                        sha256="4071996d927ade8e31f4b64e6a43346f5ffc6509927f55e739c3a45f2b445d49",
+                        features={
+                            "macho_commands_count": [FV("65536")],
+                            "macho_commands_size": [FV("0")],
+                            "macho_cpu_subtype": [FV("587336")],
+                            "macho_cpu_type": [FV("5")],
+                            "macho_file_type": [FV("33554432")],
+                            "macho_header_flag": [
+                                FV("ALLMODSBOUND"),
+                                FV("BINDS_TO_WEAK"),
+                                FV("DEAD_STRIPPABLE_DYLIB"),
+                                FV("FORCE_FLAT"),
+                                FV("HAS_TLV_DESCRIPTORS"),
+                                FV("NOMULTIDEFS"),
+                                FV("PREBINDABLE"),
+                                FV("ROOT_SAFE"),
+                                FV("SUBSECTIONS_VIA_SYMBOLS"),
+                                FV("TWOLEVEL"),
+                            ],
+                            "macho_header_reserved": [FV("0")],
+                            "macho_load_command": [FV("LIEF_UNKNOWN")],
+                            "macho_load_command_count": [FV("1", label="LIEF_UNKNOWN")],
+                            "macho_load_command_hash": [FV("d41d8cd98f00b204e9800998ecf8427e", label="28")],
+                            "macho_load_command_offset": [FV("28")],
+                            "macho_load_command_size": [FV("0", label="28")],
+                            "macho_load_command_type": [FV("LIEF_UNKNOWN", label="28")],
+                            "macho_magic": [FV("MAGIC")],
+                        },
+                    )
+                ],
+            ),
+        )
+        # self.assertJobResult(
+        #             result,
+        #             JobResult(state=State(State.Label.ERROR_EXCEPTION, message="TEST"))
+        # )

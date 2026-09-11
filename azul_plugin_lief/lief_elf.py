@@ -14,7 +14,6 @@ from typing import Any
 import lief
 from azul_runner import (
     FV,
-    BinaryPlugin,
     Feature,
     FeatureType,
     Job,
@@ -25,8 +24,10 @@ from elftools.elf import descriptions, enums
 from lief import ELF
 from lief.ELF import AndroidIdent, CorePrPsInfo, NoteAbi
 
+from azul_plugin_lief.lief_base import AzulPluginLiefBase
 
-class LiefELF(BinaryPlugin):
+
+class LiefELF(AzulPluginLiefBase):
     """Parse ELF binaries with LIEF."""
 
     CONTACT = "ASD's ACSC"
@@ -156,6 +157,11 @@ class LiefELF(BinaryPlugin):
         Feature(name="elf_note_coredump_ppid", desc="Coredump: Process parent ID", type=FeatureType.Integer),
         Feature(name="elf_note_coredump_sid", desc="Coredump: Process session ID", type=FeatureType.Integer),
         Feature(name="elf_note_coredump_uid", desc="Coredump: Process user ID", type=FeatureType.Integer),
+        Feature(
+            name="elf_note_patchelf",
+            desc="ELF note contains artifacts that indicate patchelf was used",
+            type=FeatureType.String,
+        ),
     ]
 
     def execute(self, job: Job):
@@ -213,23 +219,27 @@ class LiefELF(BinaryPlugin):
         self.features["elf_section_segments"] = []
 
         for section in elf_file.sections:
-            self.features["elf_section"].append(FV(section.name, offset=section.file_offset, size=section.size))
-            self.features["elf_section_alignment"].append(FV(section.alignment, label=section.name))
-            self.features["elf_section_entropy"].append(FV(section.entropy, label=section.name))
-            self.features["elf_section_entry_size"].append(FV(section.entry_size, label=section.name))
-            self.features["elf_section_num_flags"].append(FV(section.flags, label=section.name))
-            self._append_flags_by_feature("elf_section_flags", section.flags_list, section.name)
-            self.features["elf_section_information"].append(FV(section.information, label=section.name))
-            self.features["elf_section_link"].append(FV(section.link, label=section.name))
 
-            self._append_desc_by_feature("elf_section_type", section.type, section.name)
-            self.features["elf_section_virtual_address"].append(FV(section.virtual_address, label=section.name))
+            # Because elf_section and all labels must be a string, use validator
+            name_label = self.feature_label_validator(section.name)
+
+            self.features["elf_section"].append(FV(name_label, offset=section.file_offset, size=section.size))
+            self.features["elf_section_alignment"].append(FV(section.alignment, label=name_label))
+            self.features["elf_section_entropy"].append(FV(section.entropy, label=name_label))
+            self.features["elf_section_entry_size"].append(FV(section.entry_size, label=name_label))
+            self.features["elf_section_num_flags"].append(FV(section.flags, label=name_label))
+            self._append_flags_by_feature("elf_section_flags", section.flags_list, name_label)  # type: ignore Will never be None
+            self.features["elf_section_information"].append(FV(section.information, label=name_label))
+            self.features["elf_section_link"].append(FV(section.link, label=name_label))
+
+            self._append_desc_by_feature("elf_section_type", section.type, name_label)
+            self.features["elf_section_virtual_address"].append(FV(section.virtual_address, label=name_label))
             data = bytearray(section.content)
             section_hash = sha256(data).hexdigest()
-            self.features["elf_section_hash"].append(FV(section_hash, label=section.name))
+            self.features["elf_section_hash"].append(FV(section_hash, label=name_label))
 
             section_segments = " - ".join([str(s.type).split(".")[-1] for s in section.segments])
-            self.features["elf_section_segments"].append(FV(section_segments, label=section.name))
+            self.features["elf_section_segments"].append(FV(section_segments, label=name_label))
 
     def _handle_segments(self, elf_file: ELF.Binary):
         self.features["elf_segment"] = []
@@ -269,7 +279,15 @@ class LiefELF(BinaryPlugin):
             flags_str = "".join(flags_str)
             self.features["elf_segment_flags"].append(FV(flags_str, label=segment_num))
 
-            segment_sections = ", ".join([str(section.name) for section in segment.sections])
+            segment_section_names: list[str] = []
+            for section in segment.sections:
+                if len(section.name) > 50:
+                    name = str(section.name[:50]) + "..."
+                else:
+                    name = str(section.name)
+                segment_section_names.append((name))
+            segment_sections = ", ".join(segment_section_names)[: self.cfg.max_value_length]
+
             self.features["elf_segment_sections"].append(FV(segment_sections, label=segment_num))
 
     def _handle_dynamic_symbols(self, elf_file: ELF.Binary):
@@ -295,6 +313,8 @@ class LiefELF(BinaryPlugin):
                 symbol_name = symbol.demangled_name
             except AttributeError:
                 symbol_name = symbol.name
+            except UnicodeDecodeError:
+                symbol_name = symbol.name
             direction = ""
             if symbol.imported:
                 direction = "import"
@@ -316,24 +336,29 @@ class LiefELF(BinaryPlugin):
                 self.features[f"elf_{direction}_version"].append(FV(version, label=symbol.name))
 
     def _handle_notes(self, elf_file: ELF.Binary):
-        self.features["elf_note"] = []
-        self.features["elf_note_name"] = []
-        self.features["elf_note_type"] = []
-        self.features["elf_note_description"] = []
-        self.features["elf_note_version"] = []
-        self.features["elf_note_sdk_version"] = []
-        self.features["elf_note_ndk_version"] = []
-        self.features["elf_note_ndk_build_number"] = []
-        self.features["elf_note_abi"] = []
-        self.features["elf_note_gold_version"] = []
-        self.features["elf_note_coredump_filename"] = []
-        self.features["elf_note_coredump_flags"] = []
-        self.features["elf_note_coredump_gid"] = []
-        self.features["elf_note_coredump_pgrp"] = []
-        self.features["elf_note_coredump_pid"] = []
-        self.features["elf_note_coredump_ppid"] = []
-        self.features["elf_note_coredump_sid"] = []
-        self.features["elf_note_coredump_uid"] = []
+        note_features = [
+            "elf_note",
+            "elf_note_name",
+            "elf_note_type",
+            "elf_note_description",
+            "elf_note_version",
+            "elf_note_sdk_version",
+            "elf_note_ndk_version",
+            "elf_note_ndk_build_number",
+            "elf_note_abi",
+            "elf_note_gold_version",
+            "elf_note_coredump_filename",
+            "elf_note_coredump_flags",
+            "elf_note_coredump_gid",
+            "elf_note_coredump_pgrp",
+            "elf_note_coredump_pid",
+            "elf_note_coredump_ppid",
+            "elf_note_coredump_sid",
+            "elf_note_coredump_uid",
+            "elf_note_patchelf",
+        ]
+        for key in note_features:
+            self.features[key] = []
 
         for note_index, note in enumerate(elf_file.notes):
             self.features["elf_note"].append(FV(note_index))
@@ -346,7 +371,31 @@ class LiefELF(BinaryPlugin):
             type_str = note.type.__name__
             self.features["elf_note_type"].append(FV(type_str, label=note_index))
             description_str = " ".join(map(lambda e: "{:02x}".format(e), note.description))
-            self.features["elf_note_description"].append(FV(description_str, label=note_index))
+
+            patch_detected = False
+            fact_found = ""
+
+            # Check if it looks like patchelf was run on the binary
+            if note.type is lief.ELF.Note.TYPE.UNKNOWN:
+                """ Patchelf may "zero" out a section using X's. Storing a bunch of 'X's is not most useful.
+                But marking that this elf may have been patched could be. The check we are doing is primitive
+                Source: https://github.com/NixOS/patchelf/blob/master/src/patchelf.cc
+                """
+                if "58 58 58 58 58 58 58 58 58 58 58 58" in description_str:
+                    fact_found = "Series of 'X's found"
+                    patch_detected = True
+                elif "5A 5A 5A 5A 5A 5A 5A 5A 5A 5A 5A 5A " in description_str:
+                    # newer Patch elf artifact of 'Z' overwrite found
+                    fact_found = "Series of 'Z's found"
+                    patch_detected = True
+
+            if patch_detected:
+                self.features["elf_note_patchelf"].append(FV(fact_found, label=note_index))
+            else:
+                self.features["elf_note_description"].append(
+                    FV(self.feature_value_validator("elf_note_description", description_str), label=note_index)
+                )
+
             if isinstance(note, NoteAbi):
                 version = note.version
                 if version:

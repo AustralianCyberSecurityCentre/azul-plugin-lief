@@ -3550,3 +3550,27 @@ class TestExecute(test_template.TestPlugin):
                 ],
             ),
         )
+
+    def test_macho_complete_error(self):
+        """Check if parsing error is properly handled."""
+        result = self.do_execution(
+            data_in=[
+                (
+                    DataLabel.CONTENT,
+                    b"\x90" * 10,
+                )
+            ],
+            verify_input_content=False,
+        )
+        self.assertJobResult(
+            result,
+            JobResult(
+                state=State(State.Label.COMPLETED_WITH_ERRORS, message="macho_invalid"),
+                events=[
+                    Event(
+                        sha256="bde559b24d3a5302d82a4e56eb6f4b12d39057d100fd0ca81b337f5c1aa80cba",
+                        features={"malformed": [FV("macho_invalid")]},
+                    )
+                ],
+            ),
+        )

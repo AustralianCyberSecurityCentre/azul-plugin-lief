@@ -15,7 +15,6 @@ from uuid import UUID
 import lief
 from azul_runner import (
     FV,
-    BinaryPlugin,
     DataLabel,
     Feature,
     FeatureType,
@@ -26,6 +25,8 @@ from azul_runner import (
     cmdline_run,
 )
 from lief import MachO
+
+from azul_plugin_lief.lief_base import AzulPluginLiefBase
 
 from .fat_macho import const
 
@@ -61,7 +62,7 @@ def get_cpu_subtype(cpu_type, subtype) -> str:
         return str(subtype)
 
 
-class AzulPluginLiefMachO(BinaryPlugin):
+class AzulPluginLiefMachO(AzulPluginLiefBase):
     """Parse Mach-O file type with LIEF."""
 
     CONTACT = "ASD's ACSC"
@@ -389,9 +390,8 @@ class AzulPluginLiefMachO(BinaryPlugin):
         buf = job.get_data()
         macho_file = MachO.parse(buf.get_filepath(), config=MachO.ParserConfig.deep)
         if not macho_file or isinstance(macho_file, lief.lief_errors):
-            # if a lief error occured.
-            # TODO Status code
-            self.features["tag"] = "macho_invalid"
+            # if a lief error occurred.
+            return self.is_malformed("macho_invalid")
         else:
             # we get a MachO.FatBinary from parse()
             # for a proper fat Mach-O LIEF's support for FatBinaries is too
@@ -598,7 +598,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
 
         lc_counts = dict()
         for command in macho_file.commands:
-            command_type = LOAD_COMMAND_TYPES(command.command, str(int(command.command)))
+            command_type = LOAD_COMMAND_TYPES(command.command.value, str(int(command.command)))
 
             # count the type
             command_count = lc_counts.get(command_type, 0)

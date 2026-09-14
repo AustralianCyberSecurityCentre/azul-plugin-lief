@@ -4,6 +4,7 @@ from typing import Any
 
 from azul_runner import BinaryPlugin, FeatureValue
 
+
 class AzulPluginLiefBase(BinaryPlugin):
     """A base class providing helpful functions."""
 
@@ -39,7 +40,7 @@ class AzulPluginLiefBase(BinaryPlugin):
             self.is_malformed(
                 f"Feature value too long ({feature_key}) [ACTUAL SIZE: {len(feature_value)}]: {feature_value[: self.SAMPLE_SIZE]}"
             )
-            feature_value = feature_value[:self.CLIPPING_SIZE]
+            feature_value = feature_value[: self.CLIPPING_SIZE]
 
         return feature_value
 
@@ -64,7 +65,7 @@ class AzulPluginLiefBase(BinaryPlugin):
                 case str():
                     if len(feat[1]) > self.cfg.max_value_length:
                         self.malformed_features[feat[0]] = "Value too long"
-                        features[feat[0]] = feat[1][:self.CLIPPING_SIZE]
+                        features[feat[0]] = feat[1][: self.CLIPPING_SIZE]
                 case FeatureValue():
                     value = feat[1]
                     remake = False
@@ -76,7 +77,7 @@ class AzulPluginLiefBase(BinaryPlugin):
                             self.malformed_features[feat[0]].append(
                                 f"Value too long ({len(value.value)}): {value.value[:25]}"
                             )
-                            new_value = value.value[:self.CLIPPING_SIZE]
+                            new_value = value.value[: self.CLIPPING_SIZE]
                             remake = True
 
                     if value.label and len(value.label) > self.SAMPLE_SIZE:
@@ -116,13 +117,13 @@ class AzulPluginLiefBase(BinaryPlugin):
                         self.malformed_features[feature_key].append(
                             f"Value too long ({len(target_list[i])}): {target_list[i][: self.SAMPLE_SIZE]}"
                         )
-                        target_list[i] = target_list[i][:self.CLIPPING_SIZE]
+                        target_list[i] = target_list[i][: self.CLIPPING_SIZE]
                 case bytes():
                     if len(target_list[i]) > self.cfg.max_value_length:
                         self.malformed_features[feature_key].append(
                             f"Value too long ({len(target_list[i])}): {target_list[i][: self.SAMPLE_SIZE]}"
                         )
-                        target_list[i] = target_list[i][:self.CLIPPING_SIZE]
+                        target_list[i] = target_list[i][: self.CLIPPING_SIZE]
                 case FeatureValue():
                     value = target_list[i]
                     remake = False
@@ -134,7 +135,7 @@ class AzulPluginLiefBase(BinaryPlugin):
                             self.malformed_features[feature_key].append(
                                 f"Value too long ({len(value.value)}): {value.value[: self.SAMPLE_SIZE]}"
                             )
-                            new_value = value.value[:self.CLIPPING_SIZE]
+                            new_value = value.value[: self.CLIPPING_SIZE]
                             remake = True
 
                     if value.label and len(value.label) > self.SAMPLE_SIZE:

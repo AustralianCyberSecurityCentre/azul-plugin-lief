@@ -3550,7 +3550,3 @@ class TestExecute(test_template.TestPlugin):
                 ],
             ),
         )
-        # self.assertJobResult(
-        #             result,
-        #             JobResult(state=State(State.Label.ERROR_EXCEPTION, message="TEST"))
-        # )

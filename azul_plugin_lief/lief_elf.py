@@ -17,6 +17,7 @@ from azul_runner import (
     Feature,
     FeatureType,
     Job,
+    State,
     add_settings,
     cmdline_run,
 )
@@ -183,6 +184,9 @@ class LiefELF(AzulPluginLiefBase):
 
         self.add_many_feature_values(self.features)
 
+        if "malformed" in self.events[0].features:
+            return State(State.Label.COMPLETED_WITH_ERRORS, message="Malformed features found")
+
     def _handle_header(self, elf_file: ELF.Binary):
         """Extract features from ELF header."""
         self.features["elf_class"] = str(elf_file.header.identity_class).split(".")[-1]
@@ -219,7 +223,6 @@ class LiefELF(AzulPluginLiefBase):
         self.features["elf_section_segments"] = []
 
         for section in elf_file.sections:
-
             # Because elf_section and all labels must be a string, use validator
             name_label = self.feature_label_validator(section.name)
 
@@ -281,8 +284,8 @@ class LiefELF(AzulPluginLiefBase):
 
             segment_section_names: list[str] = []
             for section in segment.sections:
-                if len(section.name) > 50:
-                    name = str(section.name[:50]) + "..."
+                if len(section.name) > self.SAMPLE_SIZE:
+                    name = str(section.name[: self.SAMPLE_SIZE]) + "..."
                 else:
                     name = str(section.name)
                 segment_section_names.append((name))
@@ -320,6 +323,9 @@ class LiefELF(AzulPluginLiefBase):
                 direction = "import"
             if symbol.exported:
                 direction = "export"
+
+            # Possible for symbol_name to exceed value length limitation
+            symbol_name = self.feature_value_validator(f"elf_{direction}", symbol_name)
 
             if symbol.name and direction:
                 self.features[f"elf_{direction}"].append(FV(symbol_name))
@@ -381,10 +387,11 @@ class LiefELF(AzulPluginLiefBase):
                 But marking that this elf may have been patched could be. The check we are doing is primitive
                 Source: https://github.com/NixOS/patchelf/blob/master/src/patchelf.cc
                 """
-                if "58 58 58 58 58 58 58 58 58 58 58 58" in description_str:
+                times_repeated = 50
+                if "58 " * times_repeated in description_str:
                     fact_found = "Series of 'X's found"
                     patch_detected = True
-                elif "5A 5A 5A 5A 5A 5A 5A 5A 5A 5A 5A 5A " in description_str:
+                elif "5A " * times_repeated in description_str:
                     # newer Patch elf artifact of 'Z' overwrite found
                     fact_found = "Series of 'Z's found"
                     patch_detected = True

@@ -1,16 +1,14 @@
 """base plugin providing helper functions for dealing with lief data."""
 
-from collections.abc import Callable
 from typing import Any
 
 from azul_runner import BinaryPlugin, FeatureValue
 
-SAMPLE_SIZE = 50
-CLIPPING_SIZE = 30
-
-
 class AzulPluginLiefBase(BinaryPlugin):
     """A base class providing helpful functions."""
+
+    SAMPLE_SIZE = 50
+    CLIPPING_SIZE = 30
 
     def feature_label_validator(self, label: bytes | str | None) -> str | None:
         """Takes potential labels and ensures they are usable.
@@ -20,11 +18,11 @@ class AzulPluginLiefBase(BinaryPlugin):
         """
         match label:
             case bytes():
-                data = label.decode(errors="backslashreplace")[:SAMPLE_SIZE]
+                data = label.decode(errors="backslashreplace")[: self.SAMPLE_SIZE]
             case str():
                 # strings that do not originate in python could have smuggled in invalid utf-8.
                 # Take it to bytes, then decode it back to ensure we eliminate them
-                data = label.encode().decode(errors="backslashreplace")[:SAMPLE_SIZE]
+                data = label.encode().decode(errors="backslashreplace")[: self.SAMPLE_SIZE]
             case None:
                 data = None
             case _:
@@ -39,9 +37,9 @@ class AzulPluginLiefBase(BinaryPlugin):
         """
         if len(feature_value) > self.cfg.max_value_length:
             self.is_malformed(
-                f"Feature value too long ({feature_key}) [ACTUAL SIZE: {len(feature_value)}]: {feature_value[:SAMPLE_SIZE]}"
+                f"Feature value too long ({feature_key}) [ACTUAL SIZE: {len(feature_value)}]: {feature_value[: self.SAMPLE_SIZE]}"
             )
-            feature_value = feature_value[:CLIPPING_SIZE]
+            feature_value = feature_value[:self.CLIPPING_SIZE]
 
         return feature_value
 
@@ -66,7 +64,7 @@ class AzulPluginLiefBase(BinaryPlugin):
                 case str():
                     if len(feat[1]) > self.cfg.max_value_length:
                         self.malformed_features[feat[0]] = "Value too long"
-                        features[feat[0]] = feat[1][:CLIPPING_SIZE]
+                        features[feat[0]] = feat[1][:self.CLIPPING_SIZE]
                 case FeatureValue():
                     value = feat[1]
                     remake = False
@@ -78,10 +76,10 @@ class AzulPluginLiefBase(BinaryPlugin):
                             self.malformed_features[feat[0]].append(
                                 f"Value too long ({len(value.value)}): {value.value[:25]}"
                             )
-                            new_value = value.value[:CLIPPING_SIZE]
+                            new_value = value.value[:self.CLIPPING_SIZE]
                             remake = True
 
-                    if value.label and len(value.label) > SAMPLE_SIZE:
+                    if value.label and len(value.label) > self.SAMPLE_SIZE:
                         new_label = self.feature_label_validator(value.label)
                         remake = True
 
@@ -116,15 +114,15 @@ class AzulPluginLiefBase(BinaryPlugin):
                 case str():
                     if len(target_list[i]) > self.cfg.max_value_length:
                         self.malformed_features[feature_key].append(
-                            f"Value too long ({len(target_list[i])}): {target_list[i][:SAMPLE_SIZE]}"
+                            f"Value too long ({len(target_list[i])}): {target_list[i][: self.SAMPLE_SIZE]}"
                         )
-                        target_list[i] = target_list[i][:CLIPPING_SIZE]
+                        target_list[i] = target_list[i][:self.CLIPPING_SIZE]
                 case bytes():
                     if len(target_list[i]) > self.cfg.max_value_length:
                         self.malformed_features[feature_key].append(
-                            f"Value too long ({len(target_list[i])}): {target_list[i][:SAMPLE_SIZE]}"
+                            f"Value too long ({len(target_list[i])}): {target_list[i][: self.SAMPLE_SIZE]}"
                         )
-                        target_list[i] = target_list[i][:CLIPPING_SIZE]
+                        target_list[i] = target_list[i][:self.CLIPPING_SIZE]
                 case FeatureValue():
                     value = target_list[i]
                     remake = False
@@ -134,12 +132,12 @@ class AzulPluginLiefBase(BinaryPlugin):
                     if isinstance(value.value, str) or isinstance(value.value, bytes):
                         if len(value.value) > self.cfg.max_value_length:
                             self.malformed_features[feature_key].append(
-                                f"Value too long ({len(value.value)}): {value.value[:SAMPLE_SIZE]}"
+                                f"Value too long ({len(value.value)}): {value.value[: self.SAMPLE_SIZE]}"
                             )
-                            new_value = value.value[:CLIPPING_SIZE]
+                            new_value = value.value[:self.CLIPPING_SIZE]
                             remake = True
 
-                    if value.label and len(value.label) > SAMPLE_SIZE:
+                    if value.label and len(value.label) > self.SAMPLE_SIZE:
                         new_label = self.feature_label_validator(value.label)
                         remake = True
 

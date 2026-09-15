@@ -55,8 +55,7 @@ COPY debian.txt /tmp/src/
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
-    $(grep -vE "^\s*(#|$)" /tmp/src/debian.txt | tr "\n" " ") && \
-    rm -rf /tmp/src/debian.txt /var/lib/apt/lists/*
+    $(grep -vE "^\s*(#|$)" /tmp/src/debian.txt | tr "\n" " ")
 ARG UID=21000
 ARG GID=21000
 RUN groupadd -g $GID azul && useradd --create-home --shell /bin/bash -u $UID -g $GID azul
@@ -78,6 +77,11 @@ ARG UID=21000
 ARG GID=21000
 # Easiest way to install with uv managing packages.
 USER root
+RUN apt-get install -y build-essential && rm -rf /tmp/src/debian.txt /var/lib/apt/lists/*
+COPY ./debian-test.txt ./debian-test.txt
+RUN apt-get install -y --no-install-recommends \
+    $(grep -vE "^\s*(#|$)" /tmp/src/debian-test.txt | tr "\n" " ") && \
+    rm -rf /tmp/src/debian-test.txt /var/lib/apt/lists/*
 COPY ./pyproject.toml ./pyproject.toml
 RUN uv pip install --system --group dev
 USER azul

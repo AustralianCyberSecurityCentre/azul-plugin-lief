@@ -6,8 +6,6 @@ Test the LIEF PE plugin
 
 """
 
-import datetime
-
 from azul_runner import (
     FV,
     DataLabel,
@@ -7025,4 +7023,26 @@ class TestExecute(test_template.TestPlugin):
                     "d35eceded5e70b640602c241d215c845761040034725e8214310495b5c72e7be": b"",
                 },
             ),
+        )
+
+    def test_lief_pe_unexpected_unicode(self):
+        """Included to catch a case where invalid unicode is found in a lable field."""
+        result = self.do_execution(
+            data_in=[
+                (
+                    DataLabel.CONTENT,
+                    self.load_test_file_bytes(
+                        "3234322dacd40bebfbd1b18e38bbf4a302b866573ff475fd1c2c6ae1f062662c",
+                        "invalid unicode is found in a lable field",
+                    ),
+                )
+            ]
+        )
+        # Check we captured correct field and data
+        self.assertIn("pe_export_external_function", result.events[0].features)
+        self.assertIn(
+            FV(
+                "7\\xd57\x018D8\\xcd8\\xd28\\xdd8\\xf68\x089f9\\xba9::f:\\x81:\\x95:\\xbc:\\xd6:\\xe8:\x0e;,;X;q;\\x98;\\xbc;\\xe4;V<h<\\x91<\\xbb<\\xd6<\\xf9<\x1d=E=\\xd0=\\xee=\x11>7>Z>~>\\xa6>\\xfc>\x11?4?S?v?\\x9a?\\xc2?"
+            ),
+            result.events[0].features["pe_export_external_function"],
         )

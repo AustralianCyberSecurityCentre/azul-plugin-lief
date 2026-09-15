@@ -55,8 +55,7 @@ COPY debian.txt /tmp/src/
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
-    $(grep -vE "^\s*(#|$)" /tmp/src/debian.txt | tr "\n" " ") && \
-    rm -rf /tmp/src/debian.txt /var/lib/apt/lists/*
+    $(grep -vE "^\s*(#|$)" /tmp/src/debian.txt | tr "\n" " ")
 ARG UID=21000
 ARG GID=21000
 RUN groupadd -g $GID azul && useradd --create-home --shell /bin/bash -u $UID -g $GID azul
@@ -78,6 +77,7 @@ ARG UID=21000
 ARG GID=21000
 # Easiest way to install with uv managing packages.
 USER root
+RUN apt-get install -y build-essential && rm -rf /tmp/src/debian.txt /var/lib/apt/lists/*
 COPY ./pyproject.toml ./pyproject.toml
 RUN uv pip install --system --group dev
 USER azul
@@ -90,6 +90,7 @@ RUN --mount=type=secret,uid=$UID,gid=$GID,id=testSecret export $(cat /run/secret
 RUN touch /tmp/testingpassed
 
 FROM base AS release
+RUN rm -rf /tmp/src/debian.txt /var/lib/apt/lists/*
 # copy from `tester` stage to ensure testing is not skipped due to build optimisations.
 COPY --from=tester /tmp/testingpassed /tmp/
 ENTRYPOINT ["azul-plugin-lief"]

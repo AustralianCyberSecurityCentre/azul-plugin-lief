@@ -58,7 +58,7 @@ class AzulPluginLiefBase(BinaryPlugin):
         Runtime: O(n+m) where n is the number of keys and m is the number of values
         Memory: O(2n)
         """
-        self.malformed_features = dict()
+        self.malformed_features: dict[str, list[str] | str] = dict()
 
         for feat in features.items():
             match feat[1]:
@@ -74,8 +74,8 @@ class AzulPluginLiefBase(BinaryPlugin):
 
                     if isinstance(value.value, str) or isinstance(value.value, bytes):
                         if len(value.value) > self.cfg.max_value_length:
-                            self.malformed_features[feat[0]].append(
-                                f"Value too long ({len(value.value)}): {value.value[:25]}"
+                            self.malformed_features[feat[0]] = (
+                                f"Value too long ({len(value.value)}): {value.value[: self.SAMPLE_SIZE]}"
                             )
                             new_value = value.value[: self.CLIPPING_SIZE]
                             remake = True
@@ -97,42 +97,42 @@ class AzulPluginLiefBase(BinaryPlugin):
         if len(self.malformed_features) > 0:
             self.logger.error(f"MALFORMED FEATURES: {self.malformed_features}")
 
-    def _feature_list_validator(self, features: dict[str, list], feature_key: str) -> None:
+    def _feature_list_validator(self, features: dict[str, list[str | bytes | FeatureValue]], feature_key: str) -> None:
         """Check val and label."""
         self.malformed_features[feature_key] = []
 
         feature_list = features[feature_key]
 
         if len(feature_list) > self.cfg.max_values_per_feature:
-            self.malformed_features[feature_key].append("Too many values")
-            # feature_list = feature_list[: self.cfg.max_values_per_feature]
+            self.malformed_features[feature_key].append("Too many values")  # type: ignore Will alway be a list
             features[feature_key] = feature_list[: self.cfg.max_values_per_feature]
             feature_list = features[feature_key]
 
-        target_list = feature_list
+        target_list: list[str | bytes | FeatureValue] = feature_list
+        malformed_list: list[str] = self.malformed_features[feature_key]  # type: ignore
         for i in range(len(target_list)):
             match target_list[i]:
                 case str():
-                    if len(target_list[i]) > self.cfg.max_value_length:
-                        self.malformed_features[feature_key].append(
-                            f"Value too long ({len(target_list[i])}): {target_list[i][: self.SAMPLE_SIZE]}"
-                        )
-                        target_list[i] = target_list[i][: self.CLIPPING_SIZE]
+                    value_str: str = target_list[i]  # type: ignore
+                    if len(value_str) > self.cfg.max_value_length:
+                        malformed_list.append(f"Value too long ({len(value_str)}): {value_str[: self.SAMPLE_SIZE]}")
+                        target_list[i] = value_str[: self.CLIPPING_SIZE]
                 case bytes():
-                    if len(target_list[i]) > self.cfg.max_value_length:
-                        self.malformed_features[feature_key].append(
-                            f"Value too long ({len(target_list[i])}): {target_list[i][: self.SAMPLE_SIZE]}"
+                    value_bytes: bytes = target_list[i]  # type: ignore
+                    if len(value_bytes) > self.cfg.max_value_length:
+                        malformed_list.append(
+                            f"Value too long ({len(value_bytes)}): {value_bytes[: self.SAMPLE_SIZE]}"
                         )
-                        target_list[i] = target_list[i][: self.CLIPPING_SIZE]
+                        target_list[i] = value_bytes[: self.CLIPPING_SIZE]
                 case FeatureValue():
-                    value = target_list[i]
+                    value: FeatureValue = target_list[i]  # type: ignore
                     remake = False
                     new_value = value.value
                     new_label = value.label
 
                     if isinstance(value.value, str) or isinstance(value.value, bytes):
                         if len(value.value) > self.cfg.max_value_length:
-                            self.malformed_features[feature_key].append(
+                            malformed_list.append(
                                 f"Value too long ({len(value.value)}): {value.value[: self.SAMPLE_SIZE]}"
                             )
                             new_value = value.value[: self.CLIPPING_SIZE]

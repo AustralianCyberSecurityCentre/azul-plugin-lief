@@ -35,14 +35,14 @@ def add_section(
     section.virtual_address = virtual_address
     section.flags = flags
     # Make them unloaded sections so we can add as many as we want
-    binary.add(section, loaded=False)
+    binary.add(section, loaded=False)  # type: ignore
 
 
 def generate_stager():
     context.clear()
     context.arch = "amd64"
 
-    sc = shellcraft.amd64.linux.connectstager("localhost", 9999)
+    sc = shellcraft.amd64.linux.connectstager("localhost", 9999)  # type: ignore
     filename = make_elf_from_assembly(sc)
     return filename
 
@@ -153,9 +153,11 @@ class TestExecute(test_template.TestPlugin):
         """
         binary = parse(self.STAGER)
         self.assertIsNotNone(binary)
+        assert binary is not None
         section = binary.get_section(".shellcode")
         self.assertIsNotNone(section)
-        section.name = b"\x80"
+        assert section is not None
+        section.name = b"\x80"  # type: ignore
 
         result = self.do_execution(
             data_in=[
@@ -329,6 +331,7 @@ class TestExecute(test_template.TestPlugin):
         """
         binary = parse(self.STAGER)
         self.assertIsNotNone(binary)
+        assert binary is not None
         upside_down_smile = 0x1F643
         for i in range(MAX_FEATURE_VALUES):
             add_section(binary, (chr(upside_down_smile + i)), lief.ELF.Section.TYPE.NOTE, None, 0, 0)
@@ -353,8 +356,10 @@ class TestExecute(test_template.TestPlugin):
         """Tests on an ELF file that contains a section with a very long name."""
         binary = parse(self.STAGER)
         self.assertIsNotNone(binary)
+        assert binary is not None
         section = binary.get_section(".shellcode")
         self.assertIsNotNone(section)
+        assert section is not None
         section.name = "C" * (MAX_VALUE_LENGTH + 1000)
 
         result = self.do_execution(

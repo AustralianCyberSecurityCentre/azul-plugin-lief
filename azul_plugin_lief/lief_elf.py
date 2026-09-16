@@ -32,7 +32,7 @@ class LiefELF(AzulPluginLiefBase):
     """Parse ELF binaries with LIEF."""
 
     CONTACT = "ASD's ACSC"
-    VERSION = "2025.10.07"
+    VERSION = "2026.09.16"
     SETTINGS = add_settings(
         # FUTURE - may be missing ARM Coredumps unsure what type they will come under.
         filter_data_types={

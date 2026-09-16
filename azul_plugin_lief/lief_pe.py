@@ -73,7 +73,7 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
     """Parse and extract PE headers, sections, resources and more with LIEF."""
 
     CONTACT = "ASD's ACSC"
-    VERSION = "2025.10.07"
+    VERSION = "2026.09.16"
     SETTINGS = add_settings(
         # How many child resources should be extracted before stopping.
         # Limited otherwise you can get thousands of useless child binary resources.

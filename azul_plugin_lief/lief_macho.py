@@ -66,7 +66,7 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
     """Parse Mach-O file type with LIEF."""
 
     CONTACT = "ASD's ACSC"
-    VERSION = "2025.04.08"
+    VERSION = "2026.09.16"
     SETTINGS = add_settings(filter_data_types={DataLabel.CONTENT: ["executable/mach-o"]})
     # Ensure any changes are kept in sync with features set by virustotal filemapper
     FEATURES = [

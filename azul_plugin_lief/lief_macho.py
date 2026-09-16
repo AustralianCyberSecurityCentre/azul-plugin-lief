@@ -860,23 +860,30 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
         self.features["macho_dyld_info_export_size"].append(FV(size, label=str(offset)))
 
         for export in command.exports:
-            name = export.symbol.name
-            self.features["macho_export_name"].append(name)
+            if not export.symbol:
+                # NOTE: may be other data we should still tag?
+                continue
+
+            name_label = self.feature_label_validator(export.symbol.name)
+            name_value = self.str_fv_validator("macho_export_name", export.symbol.name)
+            self.features["macho_export_name"].append(name_value)
 
             sym_kind = export.kind.name
             if sym_kind:
-                self.features["macho_export_kind"].append(FV(sym_kind, label=name))
-            self.features["macho_export_flag"].extend(FV(flag.name, label=name) for flag in export.flags_list)
+                self.features["macho_export_kind"].append(FV(sym_kind, label=name_label))
+            self.features["macho_export_flag"].extend(FV(flag.name, label=name_label) for flag in export.flags_list)
 
             if export.address <= BIG_INT_MAX:
-                self.features["macho_export_address"].append(FV(export.address, label=name))
+                self.features["macho_export_address"].append(FV(export.address, label=name_label))
             else:
                 self.features.setdefault("tag", set()).add("macho_export_kernel_address")
 
             if export.alias is not None:
-                self.features["macho_export_alias_name"].append(FV(export.alias.name, label=name))
+                self.features["macho_export_alias_name"].append(FV(export.alias.name, label=name_label))
             if export.alias_library is not None:
-                self.features["macho_export_alias_library_name"].append(FV(export.alias_library.name, label=name))
+                self.features["macho_export_alias_library_name"].append(
+                    FV(export.alias_library.name, label=name_label)
+                )
 
     def _handle_macho_lc_source_version_command(self, command):
         """Extract information from Mach-O SOURCE_VERSION load command."""

@@ -160,7 +160,7 @@ class LiefELF(AzulPluginLiefBase):
         Feature(name="elf_note_coredump_uid", desc="Coredump: Process user ID", type=FeatureType.Integer),
         Feature(
             name="elf_note_patchelf",
-            desc="ELF note contains artifacts that indicate patchelf was used",
+            desc="ELF note contains artifacts that indicate patchelf may have been used",
             type=FeatureType.String,
         ),
     ]
@@ -224,9 +224,10 @@ class LiefELF(AzulPluginLiefBase):
 
         for section in elf_file.sections:
             # Because elf_section and all labels must be a string, use validator
+            name_value = self.str_fv_validator("elf_section", section.name)
             name_label = self.feature_label_validator(section.name)
 
-            self.features["elf_section"].append(FV(name_label, offset=section.file_offset, size=section.size))
+            self.features["elf_section"].append(FV(name_value, offset=section.file_offset, size=section.size))
             self.features["elf_section_alignment"].append(FV(section.alignment, label=name_label))
             self.features["elf_section_entropy"].append(FV(section.entropy, label=name_label))
             self.features["elf_section_entry_size"].append(FV(section.entry_size, label=name_label))
@@ -389,11 +390,11 @@ class LiefELF(AzulPluginLiefBase):
                 """
                 times_repeated = 50
                 if "58 " * times_repeated in description_str:
-                    fact_found = "Series of 'X's found"
+                    fact_found = f"{description_str.count('58')} 'X's found within note"
                     patch_detected = True
                 elif "5A " * times_repeated in description_str:
                     # newer Patch elf artifact of 'Z' overwrite found
-                    fact_found = "Series of 'Z's found"
+                    fact_found = f"{description_str.count('5A')} 'Z's found within note"
                     patch_detected = True
 
             if patch_detected:

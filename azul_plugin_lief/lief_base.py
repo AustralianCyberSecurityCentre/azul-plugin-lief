@@ -31,6 +31,17 @@ class AzulPluginLiefBase(BinaryPlugin):
                 data = ""
         return data
 
+    def str_fv_validator(self, feature_key: str, feature_value: str | bytes):
+        """Converts fv to a str and ensures valid."""
+        match feature_value:
+            case bytes():
+                data = feature_value.decode(errors="backslashreplace")
+            case str():
+                # strings that do not originate in python could have smuggled in invalid utf-8.
+                # Take it to bytes, then decode it back to ensure we eliminate them
+                data = feature_value.encode().decode(errors="backslashreplace")
+        return self.feature_value_validator(feature_key, data)
+
     def feature_value_validator(self, feature_key: str, feature_value: str | bytes):
         """Checks a feature value for "correctness".
 

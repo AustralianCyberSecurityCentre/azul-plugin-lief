@@ -59,12 +59,14 @@ class TestExecute(test_template.TestPlugin):
         Patchelf can overwrite a section with 'X's. Instead of lifting the X's, we tag the binary
         with the elf_note_patchelf feature.
 
-        VT binaries we suspect that have been patchelf
+        VT binaries we suspect that have been patchelf (or at least have same artifacts in them)
         3027ee7a51900e14937202b0c1dfea85f8129e273b8a732d8e83cba471c1eba2
         83d09b9ff0f06208fae4295a84dd91cb7637a4259f1ccf1fc8b94eedc858d8dc
         2b8a4ddd9d7b3c5efe4541d6d3fad4fa94dbe8b9e57ea3964cccfcc62f0d75e2
         414c6681b905ffc86c956caf340fc384fc2af50b6b94b659709f314c35efb2f6
         36c673da9f1acfcd1a1f169a613c7a38a580dfae17d619a9ce48ee5640f311fa
+        dad38f6598496700c33c1be80de86c45298c79e17010b110a22f19ddc9f7d231
+        972ba74b963a2355e8244eb9656d3a082e9954935a068291eff739460f9a4423
         """
         result = self.do_execution(
             data_in=[
@@ -353,7 +355,10 @@ class TestExecute(test_template.TestPlugin):
         )
 
     def test_lief_elf_large_section_name(self):
-        """Tests on an ELF file that contains a section with a very long name."""
+        """Tests on an ELF file that contains a section with a very long name.
+
+        Want to ensure we don't error and we elevate malformed value.
+        """
         binary = parse(self.STAGER)
         self.assertIsNotNone(binary)
         assert binary is not None
@@ -371,164 +376,14 @@ class TestExecute(test_template.TestPlugin):
             ],
             verify_input_content=False,
         )
-        self.assertJobResult(
-            result,
-            JobResult(
-                state=State(State.Label.COMPLETED),
-                events=[
-                    Event(
-                        sha256="fb76ddec77450a16efd109e18c8c8ccf3dfb8bfefbfe17d805cb7d8b60e0d29b",
-                        features={
-                            "elf_abi_version": [FV("0")],
-                            "elf_class": [FV("ELF64")],
-                            "elf_data": [FV("2's complement, little endian")],
-                            "elf_entrypoint": [FV("268435456")],
-                            "elf_hdr_version": [FV("1 (current)")],
-                            "elf_header_size": [FV("64")],
-                            "elf_machine": [FV("Advanced Micro Devices X86-64")],
-                            "elf_num_prog_headers": [FV("3")],
-                            "elf_num_section_headers": [FV("5")],
-                            "elf_obj_version": [FV("0x1")],
-                            "elf_os_abi": [FV("UNIX - System V")],
-                            "elf_processor_flag": [FV("0")],
-                            "elf_program_header_offset": [FV("64")],
-                            "elf_program_header_size": [FV("56")],
-                            "elf_section": [
-                                FV("", offset=0, size=0),
-                                FV(".shstrtab", offset=4535, size=5028),
-                                FV(".strtab", offset=4464, size=71),
-                                FV(".symtab", offset=4224, size=240),
-                                FV("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC", offset=4096, size=122),
-                            ],
-                            "elf_section_alignment": [
-                                FV("0", label=""),
-                                FV("0", label=".shstrtab"),
-                                FV("1", label=".strtab"),
-                                FV("1", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                                FV("8", label=".symtab"),
-                            ],
-                            "elf_section_entropy": [
-                                FV("0.0", label=""),
-                                FV("0.06704064460296384", label=".shstrtab"),
-                                FV("1.261128138866488", label=".symtab"),
-                                FV("3.8481720608831615", label=".strtab"),
-                                FV("4.961172843706018", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                            ],
-                            "elf_section_entry_size": [
-                                FV("0", label=""),
-                                FV("0", label=".shstrtab"),
-                                FV("0", label=".strtab"),
-                                FV("0", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                                FV("24", label=".symtab"),
-                            ],
-                            "elf_section_flags": [
-                                FV("", label=""),
-                                FV("", label=".shstrtab"),
-                                FV("", label=".strtab"),
-                                FV("", label=".symtab"),
-                                FV("WAX", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                            ],
-                            "elf_section_hash": [
-                                FV(
-                                    "111a2ea8f864abed4a626a6b2caabacf1062165327d0ceaea3c7cad207a8401e",
-                                    label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC",
-                                ),
-                                FV(
-                                    "3eca9174fdc1858f93119dc3cd0d98897948d17c373de4cb58cfbdc9eefdeb74", label=".strtab"
-                                ),
-                                FV(
-                                    "d461e4c172d3a0eb77fc1bd78013401f30e30e7ec9213c212c65f0158bc08298", label=".symtab"
-                                ),
-                                FV(
-                                    "d4b0d43510d9f1167ece66391754d7f17cc5ecbe54d408f6e17a5af45211c8fd",
-                                    label=".shstrtab",
-                                ),
-                                FV("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", label=""),
-                            ],
-                            "elf_section_header_offset": [FV("9608")],
-                            "elf_section_header_size": [FV("64")],
-                            "elf_section_information": [
-                                FV("0", label=""),
-                                FV("0", label=".shstrtab"),
-                                FV("0", label=".strtab"),
-                                FV("0", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                                FV("10", label=".symtab"),
-                            ],
-                            "elf_section_link": [
-                                FV("0", label=""),
-                                FV("0", label=".shstrtab"),
-                                FV("0", label=".strtab"),
-                                FV("0", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                                FV("3", label=".symtab"),
-                            ],
-                            "elf_section_name_table_idx": [FV("4")],
-                            "elf_section_num_flags": [
-                                FV("0", label=""),
-                                FV("0", label=".shstrtab"),
-                                FV("0", label=".strtab"),
-                                FV("0", label=".symtab"),
-                                FV("7", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                            ],
-                            "elf_section_segments": [
-                                FV("", label=""),
-                                FV("", label=".shstrtab"),
-                                FV("", label=".strtab"),
-                                FV("", label=".symtab"),
-                                FV("LOAD", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                            ],
-                            "elf_section_type": [
-                                FV("NULL", label=""),
-                                FV("PROGBITS", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                                FV("STRTAB", label=".shstrtab"),
-                                FV("STRTAB", label=".strtab"),
-                                FV("SYMTAB", label=".symtab"),
-                            ],
-                            "elf_section_virtual_address": [
-                                FV("0", label=""),
-                                FV("0", label=".shstrtab"),
-                                FV("0", label=".strtab"),
-                                FV("0", label=".symtab"),
-                                FV("268435456", label="CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
-                            ],
-                            "elf_segment": [
-                                FV("0", offset=0, size=232),
-                                FV("1", offset=4096, size=122),
-                                FV("2", offset=0, size=0),
-                            ],
-                            "elf_segment_alignment": [
-                                FV("16", label="2"),
-                                FV("4096", label="0"),
-                                FV("4096", label="1"),
-                            ],
-                            "elf_segment_flags": [FV("R--", label="0"), FV("RWX", label="1"), FV("RWX", label="2")],
-                            "elf_segment_physical_address": [
-                                FV("0", label="2"),
-                                FV("268431360", label="0"),
-                                FV("268435456", label="1"),
-                            ],
-                            "elf_segment_sections": [
-                                FV("", label="0"),
-                                FV("", label="2"),
-                                FV("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC...", label="1"),
-                            ],
-                            "elf_segment_type": [
-                                FV("GNU_STACK", label="2"),
-                                FV("LOAD", label="0"),
-                                FV("LOAD", label="1"),
-                            ],
-                            "elf_segment_virtual_address": [
-                                FV("0", label="2"),
-                                FV("268431360", label="0"),
-                                FV("268435456", label="1"),
-                            ],
-                            "elf_segment_virtual_size": [
-                                FV("0", label="2"),
-                                FV("122", label="1"),
-                                FV("232", label="0"),
-                            ],
-                            "elf_type": [FV("EXEC (Executable file)")],
-                        },
-                    )
-                ],
-            ),
+        expected = str(
+            [
+                FV(
+                    f"Feature value too long (elf_section) [ACTUAL SIZE: {MAX_VALUE_LENGTH + 1000}]: CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"
+                )
+            ]
         )
+
+        self.assertIn("malformed", result.events[0].features)
+        caught_malformed = result.events[0].features["malformed"]
+        self.assertEqual(str(caught_malformed), expected)

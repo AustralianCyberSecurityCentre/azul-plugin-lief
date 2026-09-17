@@ -18,7 +18,6 @@ from azul_runner import (
     DataLabel,
     Feature,
     FeatureType,
-    Filepath,
     Job,
     State,
     add_settings,
@@ -126,7 +125,7 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
         Feature(name="macho_section_flag", desc="Flags of section", type=FeatureType.String),
         Feature(name="macho_section_hash", desc="MD5 hash of data in section", type=FeatureType.String),
         # Dylib command features
-        Feature(name="macho_dylib_name", desc="Name of dylib", type=Filepath),  # ty: ignore[invalid-argument-type] For elastic parsing
+        Feature(name="macho_dylib_name", desc="Name of dylib", type=FeatureType.Filepath),
         Feature(name="macho_dylib_timestamp", desc="Name of dylib", type=FeatureType.Integer),
         Feature(name="macho_dylib_current_version", desc="Current version of dylib", type=FeatureType.String),
         Feature(name="macho_dylib_compat_version", desc="Compatibility version of dylib", type=FeatureType.String),
@@ -710,7 +709,7 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
             raise TypeError("Expected DylibCommand")
 
         name = command.name
-        self.features["macho_dylib_name"].append(Filepath(name))
+        self.features["macho_dylib_name"].append(name)
         self.features["macho_dylib_timestamp"].append(FV(command.timestamp, label=name))
         self.features["macho_dylib_current_version"].append(
             FV("{}.{}.{}".format(*command.current_version), label=name)

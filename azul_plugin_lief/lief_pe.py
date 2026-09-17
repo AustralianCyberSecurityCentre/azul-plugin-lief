@@ -21,7 +21,6 @@ from azul_runner import (
     Feature,
     FeatureType,
     FeatureValue,
-    Filepath,
     Job,
     StorageProxyFile,
     add_settings,
@@ -993,7 +992,7 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
             if isinstance(debug, PE.CodeViewPDB):
                 self.features["pe_debug_codeview_age"] = debug.age
                 self.features["pe_debug_codeview_signature"] = debug.cv_signature.name
-                self.features["pe_debug_codeview_filename"] = Filepath(debug.filename)
+                self.features["pe_debug_codeview_filename"] = debug.filename
                 self.features["pe_debug_codeview_guid"] = str(UUID(bytes_le=bytes(debug.signature)))
 
     def _handle_signatures(self, pe_file: lief.PE.Binary):

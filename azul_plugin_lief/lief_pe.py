@@ -21,7 +21,6 @@ from azul_runner import (
     Feature,
     FeatureType,
     FeatureValue,
-    Filepath,
     Job,
     StorageProxyFile,
     add_settings,

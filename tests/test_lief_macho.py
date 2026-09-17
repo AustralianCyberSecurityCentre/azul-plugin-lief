@@ -14,10 +14,8 @@ from azul_runner import (
     Event,
     EventData,
     EventParent,
-    Filepath,
     JobResult,
     State,
-    Uri,
     test_template,
 )
 

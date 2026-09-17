@@ -709,7 +709,7 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
             raise TypeError("Expected DylibCommand")
 
         name = command.name
-        self.features["macho_dylib_name"].append(Filepath(name))
+        self.features["macho_dylib_name"].append(name)
         self.features["macho_dylib_timestamp"].append(FV(command.timestamp, label=name))
         self.features["macho_dylib_current_version"].append(
             FV("{}.{}.{}".format(*command.current_version), label=name)

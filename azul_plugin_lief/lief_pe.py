@@ -18,7 +18,6 @@ from uuid import UUID
 
 import lief
 from azul_runner import (
-    BinaryPlugin,
     Feature,
     FeatureType,
     FeatureValue,
@@ -30,6 +29,8 @@ from azul_runner import (
     plugin_executor,
 )
 from lief import PE
+
+from azul_plugin_lief.lief_base import AzulPluginLiefBase
 
 
 def enum_wrapper(lief_enum):
@@ -68,11 +69,11 @@ RESOURCE_TYPES = enum_wrapper(PE.ResourcesManager.TYPE)
 RESOURCE_LANGS = enum_wrapper(PE.RESOURCE_LANGS)
 
 
-class AzulPluginLiefPE(BinaryPlugin):
+class AzulPluginLiefPE(AzulPluginLiefBase):
     """Parse and extract PE headers, sections, resources and more with LIEF."""
 
     CONTACT = "ASD's ACSC"
-    VERSION = "2025.10.07"
+    VERSION = "2026.09.16"
     SETTINGS = add_settings(
         # How many child resources should be extracted before stopping.
         # Limited otherwise you can get thousands of useless child binary resources.
@@ -788,18 +789,18 @@ class AzulPluginLiefPE(BinaryPlugin):
         self.features["pe_export_external_function_ordinal"] = list()
 
         for export_function in export.entries:
-            function_name = export_function.name
+            function_name_value: str = self.str_fv_validator("pe_export_function", export_function.name)
+            function_name_label: str = self.feature_label_validator(export_function.name)  # type: ignore
+
             if export_function.is_extern:
-                self.features["pe_export_external_function"].append(function_name)
+                self.features["pe_export_external_function"].append(function_name_value)
                 self.features["pe_export_external_function_ordinal"].append(
-                    FeatureValue(export_function.ordinal, label=function_name)
+                    FeatureValue(export_function.ordinal, label=function_name_label)
                 )
             else:
-                if isinstance(function_name, bytes):
-                    function_name = function_name.decode(errors="backslashreplace")
-                self.features["pe_export_function"].append(function_name)
+                self.features["pe_export_function"].append(function_name_value)
                 self.features["pe_export_function_address"].append(
-                    FeatureValue(export_function.address, label=function_name)
+                    FeatureValue(export_function.address, label=function_name_label)
                 )
 
     def _handle_overlay(self, pe_file: lief.PE.Binary, buf: StorageProxyFile):

@@ -15,7 +15,6 @@ from uuid import UUID
 import lief
 from azul_runner import (
     FV,
-    BinaryPlugin,
     DataLabel,
     Feature,
     FeatureType,
@@ -27,6 +26,8 @@ from azul_runner import (
 )
 from lief import MachO
 
+from azul_plugin_lief.lief_base import AzulPluginLiefBase
+
 from .fat_macho import const
 
 BIG_INT_MAX = (1 << 63) - 1
@@ -35,7 +36,7 @@ BIG_INT_MAX = (1 << 63) - 1
 def enum_wrapper(macho_enum):
     """Wrap a macho enum to allow getting the name of the enum rather than the Enum itself."""
 
-    def get_enum_name_or_none(value: int, default=None) -> str | None:
+    def get_enum_name_or_none(value: int, default: None | str = None) -> str | None:
         """Get the name of an enum or the default value if that fails."""
         try:
             return macho_enum.from_value(value).__name__
@@ -51,21 +52,21 @@ LOAD_COMMAND_TYPES = enum_wrapper(MachO.LoadCommand.TYPE)
 
 
 # lief doesn't map subtypes, so reuse consts in fat_macho project
-def get_cpu_subtype(cpu_type, subtype):
+def get_cpu_subtype(cpu_type, subtype) -> str:
     """Get the human readable CPU subtype from the field."""
     try:
         flags = subtype & const.CPU_SUBTYPE_MASK
         s = subtype ^ flags
         return const.CPUSubType[const.CPUType(int(cpu_type))](s).name
-    except (KeyError, TypeError):
+    except (KeyError, TypeError, ValueError):
         return str(subtype)
 
 
-class AzulPluginLiefMachO(BinaryPlugin):
+class AzulPluginLiefMachO(AzulPluginLiefBase):
     """Parse Mach-O file type with LIEF."""
 
     CONTACT = "ASD's ACSC"
-    VERSION = "2025.04.08"
+    VERSION = "2026.09.16"
     SETTINGS = add_settings(filter_data_types={DataLabel.CONTENT: ["executable/mach-o"]})
     # Ensure any changes are kept in sync with features set by virustotal filemapper
     FEATURES = [
@@ -389,8 +390,8 @@ class AzulPluginLiefMachO(BinaryPlugin):
         buf = job.get_data()
         macho_file = MachO.parse(buf.get_filepath(), config=MachO.ParserConfig.deep)
         if not macho_file or isinstance(macho_file, lief.lief_errors):
-            # if a lief error occured.
-            self.features["tag"] = "macho_invalid"
+            # if a lief error occurred.
+            return self.is_malformed("macho_invalid")
         else:
             # we get a MachO.FatBinary from parse()
             # for a proper fat Mach-O LIEF's support for FatBinaries is too
@@ -597,7 +598,7 @@ class AzulPluginLiefMachO(BinaryPlugin):
 
         lc_counts = dict()
         for command in macho_file.commands:
-            command_type = LOAD_COMMAND_TYPES(command.command, str(int(command.command)))
+            command_type = LOAD_COMMAND_TYPES(command.command.value, str(int(command.command)))
 
             # count the type
             command_count = lc_counts.get(command_type, 0)
@@ -859,23 +860,30 @@ class AzulPluginLiefMachO(BinaryPlugin):
         self.features["macho_dyld_info_export_size"].append(FV(size, label=str(offset)))
 
         for export in command.exports:
-            name = export.symbol.name
-            self.features["macho_export_name"].append(name)
+            if not export.symbol:
+                # NOTE: may be other data we should still tag?
+                continue
+
+            name_label = self.feature_label_validator(export.symbol.name)
+            name_value = self.str_fv_validator("macho_export_name", export.symbol.name)
+            self.features["macho_export_name"].append(name_value)
 
             sym_kind = export.kind.name
             if sym_kind:
-                self.features["macho_export_kind"].append(FV(sym_kind, label=name))
-            self.features["macho_export_flag"].extend(FV(flag.name, label=name) for flag in export.flags_list)
+                self.features["macho_export_kind"].append(FV(sym_kind, label=name_label))
+            self.features["macho_export_flag"].extend(FV(flag.name, label=name_label) for flag in export.flags_list)
 
             if export.address <= BIG_INT_MAX:
-                self.features["macho_export_address"].append(FV(export.address, label=name))
+                self.features["macho_export_address"].append(FV(export.address, label=name_label))
             else:
                 self.features.setdefault("tag", set()).add("macho_export_kernel_address")
 
             if export.alias is not None:
-                self.features["macho_export_alias_name"].append(FV(export.alias.name, label=name))
+                self.features["macho_export_alias_name"].append(FV(export.alias.name, label=name_label))
             if export.alias_library is not None:
-                self.features["macho_export_alias_library_name"].append(FV(export.alias_library.name, label=name))
+                self.features["macho_export_alias_library_name"].append(
+                    FV(export.alias_library.name, label=name_label)
+                )
 
     def _handle_macho_lc_source_version_command(self, command):
         """Extract information from Mach-O SOURCE_VERSION load command."""

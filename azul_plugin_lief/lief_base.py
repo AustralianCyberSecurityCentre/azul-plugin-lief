@@ -8,6 +8,7 @@ from azul_runner import BinaryPlugin, FeatureValue
 class AzulPluginLiefBase(BinaryPlugin):
     """A base class providing helpful functions."""
 
+    LABEL_MAX = 120
     SAMPLE_SIZE = 50
     CLIPPING_SIZE = 30
 
@@ -19,11 +20,11 @@ class AzulPluginLiefBase(BinaryPlugin):
         """
         match label:
             case bytes():
-                data = label.decode(errors="backslashreplace")[: self.SAMPLE_SIZE]
+                data = label.decode(errors="backslashreplace")[: self.LABEL_MAX]
             case str():
                 # strings that do not originate in python could have smuggled in invalid utf-8.
                 # Take it to bytes, then decode it back to ensure we eliminate them
-                data = label.encode().decode(errors="backslashreplace")[: self.SAMPLE_SIZE]
+                data = label.encode().decode(errors="backslashreplace")[: self.LABEL_MAX]
             case None:
                 data = None
             case _:
@@ -31,7 +32,7 @@ class AzulPluginLiefBase(BinaryPlugin):
                 data = ""
         return data
 
-    def str_fv_validator(self, feature_key: str, feature_value: str | bytes):
+    def str_fv_validator(self, feature_key: str, feature_value: str | bytes) -> str:
         """Converts fv to a str and ensures valid."""
         match feature_value:
             case bytes():

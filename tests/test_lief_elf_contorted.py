@@ -39,6 +39,13 @@ def add_section(
 
 
 def generate_stager():
+    """Use pwntools to generate a stager binary.
+
+    requires 'build-essential' installed on system.
+
+    Using the generated, valid, ELF binary as a base, we can then use Lief to manipulate it
+    to test ourselves with uncommon or absurd edge cases.
+    """
     context.clear()
     context.arch = "amd64"
 

@@ -789,22 +789,18 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
         self.features["pe_export_external_function_ordinal"] = list()
 
         for export_function in export.entries:
-            if isinstance(export_function.name, bytes):
-                function_name_str = export_function.name.decode(errors="backslashreplace")
-            else:
-                function_name_str = export_function.name
-
-            fv_function_name_str = self.feature_value_validator("pe_export_function", function_name_str)
+            function_name_value: str = self.str_fv_validator("pe_export_function", export_function.name)
+            function_name_label: str = self.feature_label_validator(export_function.name)  # type: ignore
 
             if export_function.is_extern:
-                self.features["pe_export_external_function"].append(fv_function_name_str)
+                self.features["pe_export_external_function"].append(function_name_value)
                 self.features["pe_export_external_function_ordinal"].append(
-                    FeatureValue(export_function.ordinal, label=function_name_str)
+                    FeatureValue(export_function.ordinal, label=function_name_label)
                 )
             else:
-                self.features["pe_export_function"].append(fv_function_name_str)
+                self.features["pe_export_function"].append(function_name_value)
                 self.features["pe_export_function_address"].append(
-                    FeatureValue(export_function.address, label=function_name_str)
+                    FeatureValue(export_function.address, label=function_name_label)
                 )
 
     def _handle_overlay(self, pe_file: lief.PE.Binary, buf: StorageProxyFile):

@@ -130,7 +130,7 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
         Feature(name="macho_dylib_current_version", desc="Current version of dylib", type=FeatureType.String),
         Feature(name="macho_dylib_compat_version", desc="Compatibility version of dylib", type=FeatureType.String),
         # RPath command feature
-        Feature(name="macho_rpath", desc="Run path used to find @rpath prefixed dylibs", type=FeatureType.String),
+        Feature(name="macho_rpath", desc="Run path used to find @rpath prefixed dylibs", type=FeatureType.Filepath),
         # UUID command feature
         Feature(name="macho_uuid", desc="UUID added by the linker to the Mach-O", type=FeatureType.String),
         # Dynamic linker command feature

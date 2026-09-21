@@ -327,20 +327,23 @@ class LiefELF(AzulPluginLiefBase):
 
             # Possible for symbol_name to exceed value length limitation
             symbol_name = self.feature_value_validator(f"elf_{direction}", symbol_name)
+            symbol_label = self.feature_label_validator(symbol_name)
 
             if symbol.name and direction:
                 self.features[f"elf_{direction}"].append(FV(symbol_name))
-                self.features[f"elf_{direction}_type"].append(FV(str(symbol.type).split(".")[-1], label=symbol.name))
-                self.features[f"elf_{direction}_value"].append(FV(symbol.value, label=symbol.name))
-                self.features[f"elf_{direction}_size"].append(FV(symbol.size, label=symbol.name))
+                self.features[f"elf_{direction}_type"].append(FV(str(symbol.type).split(".")[-1], label=symbol_label))
+                self.features[f"elf_{direction}_value"].append(FV(symbol.value, label=symbol_label))
+                self.features[f"elf_{direction}_size"].append(FV(symbol.size, label=symbol_label))
                 self.features[f"elf_{direction}_visibility"].append(
-                    FV(str(symbol.visibility).split(".")[-1], label=symbol.name)
+                    FV(str(symbol.visibility).split(".")[-1], label=symbol_label)
                 )
                 self.features[f"elf_{direction}_binding"].append(
-                    FV(str(symbol.binding).split(".")[-1], label=symbol.name)
+                    FV(str(symbol.binding).split(".")[-1], label=symbol_label)
                 )
-                version = str(symbol.symbol_version) if symbol.has_version else ""
-                self.features[f"elf_{direction}_version"].append(FV(version, label=symbol.name))
+
+                if symbol.has_version:
+                    version = str(symbol.symbol_version)
+                    self.features[f"elf_{direction}_version"].append(FV(version, label=symbol_label))
 
     def _handle_notes(self, elf_file: ELF.Binary):
         note_features = [

@@ -867,7 +867,7 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
             name_value = self.str_fv_validator("macho_export_name", export.symbol.name)
             self.features["macho_export_name"].append(name_value)
 
-            try: 
+            try:
                 sym_kind = export.kind.name
             except AttributeError:
                 sym_kind = str(export.kind)

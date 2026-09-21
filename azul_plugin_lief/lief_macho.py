@@ -867,7 +867,11 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
             name_value = self.str_fv_validator("macho_export_name", export.symbol.name)
             self.features["macho_export_name"].append(name_value)
 
-            sym_kind = export.kind.name
+            try: 
+                sym_kind = export.kind.name
+            except AttributeError:
+                sym_kind = str(export.kind)
+
             if sym_kind:
                 self.features["macho_export_kind"].append(FV(sym_kind, label=name_label))
             self.features["macho_export_flag"].extend(FV(flag.name, label=name_label) for flag in export.flags_list)
@@ -878,7 +882,8 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
                 self.features.setdefault("tag", set()).add("macho_export_kernel_address")
 
             if export.alias is not None:
-                self.features["macho_export_alias_name"].append(FV(export.alias.name, label=name_label))
+                alias = self.str_fv_validator("macho_export_alias_name", export.alias.name)
+                self.features["macho_export_alias_name"].append(FV(alias, label=name_label))
             if export.alias_library is not None:
                 self.features["macho_export_alias_library_name"].append(
                     FV(export.alias_library.name, label=name_label)

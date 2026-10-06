@@ -353,6 +353,7 @@ class TestExecute(test_template.TestPlugin):
             ],
             verify_input_content=False,
         )
+
         self.assertEqual(result.state.label, State.Label.COMPLETED_WITH_ERRORS)
         self.assertIn(
             "Partial completion occurred with the following errors: too many values for feature ", result.state.message

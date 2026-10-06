@@ -353,11 +353,11 @@ class TestExecute(test_template.TestPlugin):
             ],
             verify_input_content=False,
         )
-
         self.assertEqual(result.state.label, State.Label.COMPLETED_WITH_ERRORS)
-        self.assertIn(
-            "Partial completion occurred with the following errors: too many values for feature ", result.state.message
-        )
+        message = ""
+        if result.state.message:
+            message = result.state.message
+        self.assertIn("Partial completion occurred with the following errors: too many values for feature ", message)
 
     def test_lief_elf_large_section_name(self):
         """Tests on an ELF file that contains a section with a very long name.

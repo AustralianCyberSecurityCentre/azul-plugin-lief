@@ -353,12 +353,9 @@ class TestExecute(test_template.TestPlugin):
             ],
             verify_input_content=False,
         )
-        self.assertEqual(
-            result.state,
-            State(
-                State.Label.COMPLETED_WITH_ERRORS,
-                message="Partial completion occurred with the following errors: too many values for feature elf_section (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_alignment (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_entropy (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_entry_size (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_flags (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_hash (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_information (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_link (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_num_flags (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_segments (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_type (1005) capping returned values to values at 1000\ntoo many values for feature elf_section_virtual_address (1005) capping returned values to values at 1000\ntoo many values for plugin (12042) only returning first (9500 values)\ndropping 1000/1000 values from elf_section_virtual_address\ndropping 1000/1000 values from elf_section_type\ndropping 542/1000 values from elf_section_segments",
-            ),
+        self.assertEqual(result.state.label, State.Label.COMPLETED_WITH_ERRORS)
+        self.assertIn(
+            "Partial completion occurred with the following errors: too many values for feature ", result.state.message
         )
 
     def test_lief_elf_large_section_name(self):

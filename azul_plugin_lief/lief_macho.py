@@ -630,41 +630,49 @@ class AzulPluginLiefMachO(AzulPluginLiefBase):
         if not isinstance(command, MachO.SegmentCommand):
             raise TypeError("Expected SegmentCommand")
 
-        name = command.name
-        self.features["macho_segment_name"].append(FV(name, offset=command.file_offset, size=command.file_size))
+        name_label = self.feature_label_validator(command.name)
+        name_value = self.str_fv_validator("macho_segment_name", command.name)
+
+        self.features["macho_segment_name"].append(FV(name_value, offset=command.file_offset, size=command.file_size))
         if command.virtual_address <= BIG_INT_MAX:
-            self.features["macho_segment_virtual_address"].append(FV(command.virtual_address, label=name))
+            self.features["macho_segment_virtual_address"].append(FV(command.virtual_address, label=name_label))
         else:
             self.features.setdefault("tag", set()).add("macho_segment_kernel_virtual_address")
 
         if command.virtual_size <= BIG_INT_MAX:
-            self.features["macho_segment_virtual_size"].append(FV(command.virtual_size, label=name))
+            self.features["macho_segment_virtual_size"].append(FV(command.virtual_size, label=name_label))
         else:
             self.features.setdefault("tag", set()).add("macho_excessive_segment_virtual_size")
 
         if command.file_size <= BIG_INT_MAX:
-            self.features["macho_segment_raw_size"].append(FV(command.file_size, label=name))
+            self.features["macho_segment_raw_size"].append(FV(command.file_size, label=name_label))
         else:
             self.features.setdefault("tag", set()).add("macho_excessive_segment_raw_size")
 
         if command.file_offset <= BIG_INT_MAX:
-            self.features["macho_segment_raw_offset"].append(FV(command.file_offset, label=name))
+            self.features["macho_segment_raw_offset"].append(FV(command.file_offset, label=name_label))
         else:
             self.features.setdefault("tag", set()).add("macho_excessive_segment_raw_offset")
 
-        self.features["macho_segment_max_protection"].append(FV("{:08x}".format(command.max_protection), label=name))
+        self.features["macho_segment_max_protection"].append(
+            FV("{:08x}".format(command.max_protection), label=name_label)
+        )
 
-        self.features["macho_segment_init_protection"].append(FV("{:08x}".format(command.init_protection), label=name))
-        self.features["macho_segment_flags"].append(FV("{:08x}".format(command.flags), label=name))
-        self.features["macho_segment_sections_count"].append(FV(command.numberof_sections, label=name))
-        self.features["macho_segment_relocations_count"].append(FV(len(command.relocations), label=name))
+        self.features["macho_segment_init_protection"].append(
+            FV("{:08x}".format(command.init_protection), label=name_label)
+        )
+        self.features["macho_segment_flags"].append(FV("{:08x}".format(command.flags), label=name_label))
+        self.features["macho_segment_sections_count"].append(FV(command.numberof_sections, label=name_label))
+        self.features["macho_segment_relocations_count"].append(FV(len(command.relocations), label=name_label))
         self.features["macho_segment_hash"].append(
-            FV(md5(bytearray(command.content)).hexdigest(), label=name)  # noqa: S303, S324
+            FV(md5(bytearray(command.content)).hexdigest(), label=name_label)  # noqa: S303, S324
         )
 
         for section in command.sections:
-            sec_name = "{segment_name}.{section_name}".format(segment_name=command.name, section_name=section.name)
-            self.features["macho_section_name"].append(FV(section.name, label=name))
+            sec_name = "{segment_name}.{section_name}".format(segment_name=name_label, section_name=section.name)
+            self.features["macho_section_name"].append(
+                FV(self.str_fv_validator("macho_section_name", section.name), label=name_label)
+            )
             self.features["macho_section_fullname"].append(sec_name)
 
             if section.size <= BIG_INT_MAX:

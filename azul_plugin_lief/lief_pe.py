@@ -434,7 +434,7 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
         if count > plugin_executor.MAX_FEATURE_VALUES:
             self._cap_list_or_set_features(
                 less_important_large_features,
-                self.cfg.max_values_per_less_important_feature,  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+                self.cfg.max_values_per_less_important_feature,  # ty: ignore[missing-attribute] ty doesn't understand add_settings
             )
 
         # Half the size of the important features
@@ -442,13 +442,13 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
         if count > plugin_executor.MAX_FEATURE_VALUES:
             self._cap_list_or_set_features(
                 important_features,
-                max(self.cfg.max_values_per_feature // 2, self.cfg.max_values_per_less_important_feature),  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+                max(self.cfg.max_values_per_feature // 2, self.cfg.max_values_per_less_important_feature),  # ty: ignore[missing-attribute] ty doesn't understand add_settings
             )
 
         # Trim the important features to the same level as the less important features.
         count = self._count_features()
         if count > plugin_executor.MAX_FEATURE_VALUES:
-            self._cap_list_or_set_features(important_features, self.cfg.max_values_per_less_important_feature)  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+            self._cap_list_or_set_features(important_features, self.cfg.max_values_per_less_important_feature)  # ty: ignore[missing-attribute] ty doesn't understand add_settings
 
     def execute(self, job: Job):
         """Process any PE file and attempt to parse using LIEF."""
@@ -626,7 +626,7 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
             name = s.name
             # Check if name can be decoded
             try:
-                name = name.decode()  # ty: ignore[unresolved-attribute]
+                name = name.decode()  # ty: ignore[missing-attribute]
             except (UnicodeDecodeError, AttributeError):
                 name = str(name).lstrip("b'").rstrip("'")
 
@@ -875,7 +875,7 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
                         continue
 
                     # Content
-                    res_content = bytes(res_lvl3.content)  # ty: ignore[unresolved-attribute] ty doesn't think content is a real field
+                    res_content = bytes(res_lvl3.content)  # ty: ignore[missing-attribute] ty doesn't think content is a real field
                     if is_repeated_byte_file(res_content):
                         # Filter out bad files.
                         continue
@@ -932,7 +932,7 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
                     self.features["pe_resource_language"].add(FeatureValue(res_lang))
 
                     # don't produce excessive numbers of children
-                    if len(self.features["pe_resource"]) > self.cfg.max_resource_extraction:  # ty: ignore[unresolved-attribute] ty doesn't understand add_settings
+                    if len(self.features["pe_resource"]) > self.cfg.max_resource_extraction:  # ty: ignore[missing-attribute] ty doesn't understand add_settings
                         msg = "pe_resource_extraction_limit_exceeded"
                         if msg not in self.features.get("tag", []):
                             self.features.setdefault("tag", set()).add(msg)

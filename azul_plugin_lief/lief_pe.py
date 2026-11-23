@@ -626,7 +626,7 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
             name = s.name
             # Check if name can be decoded
             try:
-                name = name.decode()  # ty: ignore[missing-attribute]
+                name = name.decode()  # ty: ignore[missing-union-attribute]
             except (UnicodeDecodeError, AttributeError):
                 name = str(name).lstrip("b'").rstrip("'")
 

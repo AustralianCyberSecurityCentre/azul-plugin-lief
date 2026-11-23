@@ -434,14 +434,14 @@ class LiefELF(AzulPluginLiefBase):
             # the like (CorePrStatus), but instead just extracting some core features:
             if isinstance(note, CorePrPsInfo):
                 # It is possible that one or more of the following fields is `None`. Instead of checking every non-None here, let Bedrock raise the exception if tries to encode it.
-                self.features["elf_note_coredump_filename"].append(FV(note.info.filename_stripped, label=note_index))  # ty: ignore[unresolved-attribute]
-                self.features["elf_note_coredump_flags"].append(FV(note.info.flag, label=note_index))  # ty: ignore[unresolved-attribute]
-                self.features["elf_note_coredump_gid"].append(FV(note.info.gid, label=note_index))  # ty: ignore[unresolved-attribute]
-                self.features["elf_note_coredump_pgrp"].append(FV(note.info.pgrp, label=note_index))  # ty: ignore[unresolved-attribute]
-                self.features["elf_note_coredump_pid"].append(FV(note.info.pid, label=note_index))  # ty: ignore[unresolved-attribute]
-                self.features["elf_note_coredump_ppid"].append(FV(note.info.ppid, label=note_index))  # ty: ignore[unresolved-attribute]
-                self.features["elf_note_coredump_sid"].append(FV(note.info.sid, label=note_index))  # ty: ignore[unresolved-attribute]
-                self.features["elf_note_coredump_uid"].append(FV(note.info.uid, label=note_index))  # ty: ignore[unresolved-attribute]
+                self.features["elf_note_coredump_filename"].append(FV(note.info.filename_stripped, label=note_index))  # ty: ignore[missing-attribute]
+                self.features["elf_note_coredump_flags"].append(FV(note.info.flag, label=note_index))  # ty: ignore[missing-attribute]
+                self.features["elf_note_coredump_gid"].append(FV(note.info.gid, label=note_index))  # ty: ignore[missing-attribute]
+                self.features["elf_note_coredump_pgrp"].append(FV(note.info.pgrp, label=note_index))  # ty: ignore[missing-attribute]
+                self.features["elf_note_coredump_pid"].append(FV(note.info.pid, label=note_index))  # ty: ignore[missing-attribute]
+                self.features["elf_note_coredump_ppid"].append(FV(note.info.ppid, label=note_index))  # ty: ignore[missing-attribute]
+                self.features["elf_note_coredump_sid"].append(FV(note.info.sid, label=note_index))  # ty: ignore[missing-attribute]
+                self.features["elf_note_coredump_uid"].append(FV(note.info.uid, label=note_index))  # ty: ignore[missing-attribute]
 
     # Helper functions
 

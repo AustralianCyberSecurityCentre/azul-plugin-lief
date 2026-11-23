@@ -7046,3 +7046,47 @@ class TestExecute(test_template.TestPlugin):
             ),
             result.events[0].features["pe_export_external_function"],
         )
+
+    def test_invalid_subsystem(self):
+        """Ensure binaries with an invalid subsystem number are handled."""
+        import struct
+
+        def make_pe_magic(optional_header_subsystem: int) -> bytes:
+            """Function to generate PE_magic"""
+            data = bytearray(1024)
+
+            # DOS
+            data[0:2] = b"MZ"
+            struct.pack_into("<I", data, 0x3C, 0x80)
+
+            # PE
+            data[0x80:0x84] = b"PE\x00\x00"
+
+            # FILE_HEADER
+            struct.pack_into("<H", data, 0x84, 0x14C)  # i386
+            struct.pack_into("<H", data, 0x86, 1)  # sections
+            struct.pack_into("<H", data, 0x94, 0xE0)  # optional header size
+            struct.pack_into("<H", data, 0x96, 0x0102)  # characteristics: executable
+
+            # OPTIONAL_HEADER
+            opt = 0x98
+            struct.pack_into("<H", data, opt + 0x00, 0x10B)  # PE32
+            struct.pack_into("<H", data, opt + 0x44, optional_header_subsystem)
+
+            return bytes(data)
+
+        result = self.do_execution(
+            data_in=[
+                (
+                    DataLabel.CONTENT,
+                    make_pe_magic(4),
+                )
+            ],
+            verify_input_content=False,
+        )
+        self.assertEqual(result.state, State(State.Label.COMPLETED))
+        self.assertIn("pe_subsystem", result.events[0].features)
+        self.assertEqual(
+            FV("4"),
+            result.events[0].features["pe_subsystem"][0],
+        )

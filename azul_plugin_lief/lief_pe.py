@@ -591,7 +591,12 @@ class AzulPluginLiefPE(AzulPluginLiefBase):
             self.features.setdefault("tag", set()).add("pe_excessive_stack_reserve")
 
         self.features["pe_uninit_data_size"] = opt_header.sizeof_uninitialized_data
-        self.features["pe_subsystem"] = opt_header.subsystem.name
+
+        try:
+            self.features["pe_subsystem"] = opt_header.subsystem.name
+        except AttributeError:
+            # Subsystem may not have a name associated to the value
+            self.features["pe_subsystem"] = str(opt_header.subsystem)
 
         if opt_header.win32_version_value != 0:
             # Win32 version value should be zero
